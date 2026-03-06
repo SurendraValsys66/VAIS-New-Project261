@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,16 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import {
   BarChart,
   Bar,
@@ -271,6 +282,16 @@ export default function CampaignOverview() {
   const [deliverablePeriod, setDeliverablePeriod] = useState<
     "monthly" | "quarterly"
   >("monthly");
+
+  // Campaign acceptance state
+  const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
+  const [campaignCounts, setCampaignCounts] = useState({
+    cs: 150,
+    mql: 120,
+    hql: 90,
+    bantVpi: 60,
+    webinar: 45,
+  });
   const geoTableLocations = [
     "INDIA",
     "SINGAPORE",
@@ -357,6 +378,32 @@ export default function CampaignOverview() {
 
   const handleBackToCampaigns = () => {
     navigate("/build-my-campaign?tab=requests");
+  };
+
+  const handleAcceptCampaign = () => {
+    // Here you would typically call an API to accept the campaign with the counts
+    console.log("Campaign accepted with counts:", campaignCounts);
+    setIsAcceptModalOpen(false);
+    toast.success("Campaign accepted successfully!", {
+      description: `CS: ${campaignCounts.cs}, MQL: ${campaignCounts.mql}, HQL: ${campaignCounts.hql}, BANT+VPI: ${campaignCounts.bantVpi}, Webinar: ${campaignCounts.webinar}`,
+    });
+  };
+
+  const handleDeclineCampaign = () => {
+    // Here you would typically call an API to decline the campaign
+    console.log("Campaign declined");
+    toast.error("Campaign declined", {
+      description: "You declined to accept this campaign.",
+    });
+    navigate("/build-my-campaign?tab=requests");
+  };
+
+  const handleCountChange = (field: keyof typeof campaignCounts, value: string) => {
+    const numValue = parseInt(value, 10) || 0;
+    setCampaignCounts((prev) => ({
+      ...prev,
+      [field]: Math.max(0, numValue),
+    }));
   };
 
   const deliverableGeoData =
@@ -1224,12 +1271,133 @@ export default function CampaignOverview() {
                 Note: This campaign is already {campaignData.status}.
               </p>
             </div>
-            <Button className="bg-valasys-orange hover:bg-valasys-orange/90 rounded-full h-8 px-4 text-sm">
-              <Target className="w-4 h-4 mr-2" />
-              Track My Campaign
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 px-4 text-sm text-red-600 hover:bg-red-50"
+                onClick={handleDeclineCampaign}
+              >
+                Decline
+              </Button>
+              <Button
+                size="sm"
+                className="bg-green-600 hover:bg-green-700 h-8 px-4 text-sm"
+                onClick={() => setIsAcceptModalOpen(true)}
+              >
+                Accept
+              </Button>
+              <Button className="bg-valasys-orange hover:bg-valasys-orange/90 rounded-full h-8 px-4 text-sm">
+                <Target className="w-4 h-4 mr-2" />
+                Track My Campaign
+              </Button>
+            </div>
           </div>
         </div>
+
+        {/* Accept Campaign Modal */}
+        <Dialog open={isAcceptModalOpen} onOpenChange={setIsAcceptModalOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Accept Campaign</DialogTitle>
+              <DialogDescription>
+                Please edit the target counts for this campaign before accepting.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              {/* CS Count */}
+              <div className="space-y-2">
+                <Label htmlFor="cs-count" className="text-sm font-medium">
+                  Contact Strings (CS)
+                </Label>
+                <Input
+                  id="cs-count"
+                  type="number"
+                  min="0"
+                  value={campaignCounts.cs}
+                  onChange={(e) => handleCountChange("cs", e.target.value)}
+                  className="border-gray-300"
+                />
+              </div>
+
+              {/* MQL Count */}
+              <div className="space-y-2">
+                <Label htmlFor="mql-count" className="text-sm font-medium">
+                  Marketing Qualified Leads (MQL)
+                </Label>
+                <Input
+                  id="mql-count"
+                  type="number"
+                  min="0"
+                  value={campaignCounts.mql}
+                  onChange={(e) => handleCountChange("mql", e.target.value)}
+                  className="border-gray-300"
+                />
+              </div>
+
+              {/* HQL Count */}
+              <div className="space-y-2">
+                <Label htmlFor="hql-count" className="text-sm font-medium">
+                  Highly Qualified Leads (HQL)
+                </Label>
+                <Input
+                  id="hql-count"
+                  type="number"
+                  min="0"
+                  value={campaignCounts.hql}
+                  onChange={(e) => handleCountChange("hql", e.target.value)}
+                  className="border-gray-300"
+                />
+              </div>
+
+              {/* BANT + VPI Count */}
+              <div className="space-y-2">
+                <Label htmlFor="bant-vpi-count" className="text-sm font-medium">
+                  BANT + Value Proposition Indicator (BANT+VPI)
+                </Label>
+                <Input
+                  id="bant-vpi-count"
+                  type="number"
+                  min="0"
+                  value={campaignCounts.bantVpi}
+                  onChange={(e) => handleCountChange("bantVpi", e.target.value)}
+                  className="border-gray-300"
+                />
+              </div>
+
+              {/* Webinar Count */}
+              <div className="space-y-2">
+                <Label htmlFor="webinar-count" className="text-sm font-medium">
+                  Webinar Attendees
+                </Label>
+                <Input
+                  id="webinar-count"
+                  type="number"
+                  min="0"
+                  value={campaignCounts.webinar}
+                  onChange={(e) => handleCountChange("webinar", e.target.value)}
+                  className="border-gray-300"
+                />
+              </div>
+            </div>
+
+            <DialogFooter className="flex gap-2 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => setIsAcceptModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-green-600 hover:bg-green-700"
+                onClick={handleAcceptCampaign}
+              >
+                Confirm & Accept
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
