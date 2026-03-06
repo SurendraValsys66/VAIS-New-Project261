@@ -24,6 +24,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import {
@@ -55,6 +56,7 @@ import {
   ArrowLeft,
   Package,
   Database,
+  AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FloatingStatsWidget } from "@/components/ui/floating-stats-widget";
@@ -285,6 +287,8 @@ export default function CampaignOverview() {
 
   // Campaign acceptance state
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
+  const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
+  const [declineRemark, setDeclineRemark] = useState("");
   const [selectedLeads, setSelectedLeads] = useState<{
     cs: boolean;
     mql: boolean;
@@ -394,6 +398,19 @@ export default function CampaignOverview() {
   };
 
   const handleAcceptCampaign = () => {
+    // Check for validation errors
+    const hasError = Object.entries(campaignCounts).some(([key, count]) => {
+      // Only check if it's selected
+      return selectedLeads[key as keyof typeof selectedLeads] && count > 500;
+    });
+
+    if (hasError) {
+      toast.error("Insufficient credits", {
+        description: "One or more lead types exceed the maximum limit of 500 leads.",
+      });
+      return;
+    }
+
     // Here you would typically call an API to accept the campaign with the counts
     console.log("Campaign accepted with counts:", campaignCounts);
     setIsAcceptModalOpen(false);
@@ -403,11 +420,16 @@ export default function CampaignOverview() {
   };
 
   const handleDeclineCampaign = () => {
-    // Here you would typically call an API to decline the campaign
-    console.log("Campaign declined");
+    setIsDeclineModalOpen(true);
+  };
+
+  const handleConfirmDecline = () => {
+    // Here you would typically call an API to decline the campaign with the remark
+    console.log("Campaign declined with remark:", declineRemark);
     toast.error("Campaign declined", {
       description: "You declined to accept this campaign.",
     });
+    setIsDeclineModalOpen(false);
     navigate("/build-my-campaign?tab=requests");
   };
 
@@ -1317,7 +1339,7 @@ export default function CampaignOverview() {
 
         {/* Accept Campaign Modal */}
         <Dialog open={isAcceptModalOpen} onOpenChange={setIsAcceptModalOpen}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-[95vw] sm:max-w-[85vw] md:max-w-[500px] lg:max-w-[30%]">
             <DialogHeader>
               <DialogTitle className="text-2xl">Accept Campaign</DialogTitle>
               <DialogDescription>
@@ -1326,15 +1348,16 @@ export default function CampaignOverview() {
             </DialogHeader>
 
             <div className="py-4">
-              {/* Lead Cards Grid */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
+              {/* Lead Cards List */}
+              <div className="flex flex-col gap-4 mb-6">
                 {/* CS Card */}
                 <div
                   className={cn(
                     "p-4 rounded-lg border-2 cursor-pointer transition-all",
                     selectedLeads.cs
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-valasys-orange bg-orange-50"
+                      : "border-gray-200 bg-white hover:border-gray-300",
+                    selectedLeads.cs && campaignCounts.cs > 500 && "border-red-500 bg-red-50"
                   )}
                   onClick={() => toggleLeadSelection("cs")}
                 >
@@ -1344,6 +1367,7 @@ export default function CampaignOverview() {
                         checked={selectedLeads.cs}
                         onCheckedChange={() => toggleLeadSelection("cs")}
                         onClick={(e) => e.stopPropagation()}
+                        className="rounded-none data-[state=checked]:bg-valasys-orange data-[state=checked]:border-valasys-orange"
                       />
                       <div>
                         <h3 className="font-semibold text-gray-900 text-sm">
@@ -1352,12 +1376,15 @@ export default function CampaignOverview() {
                         <p className="text-xs text-gray-600 mt-0.5">Contact Strings</p>
                       </div>
                     </div>
-                    <div className="text-2xl font-bold text-blue-600">
+                    <div className={cn(
+                      "text-xl font-bold",
+                      selectedLeads.cs && campaignCounts.cs > 500 ? "text-red-600" : "text-valasys-orange"
+                    )}>
                       {campaignCounts.cs}
                     </div>
                   </div>
                   {selectedLeads.cs && (
-                    <div className="mt-3">
+                    <div className="mt-3 space-y-2">
                       <Input
                         type="number"
                         min="0"
@@ -1365,8 +1392,16 @@ export default function CampaignOverview() {
                         value={campaignCounts.cs}
                         onChange={(e) => handleCountChange("cs", e.target.value)}
                         onClick={(e) => e.stopPropagation()}
-                        className="border-blue-300 bg-white text-sm"
+                        className={cn(
+                          "bg-white text-sm",
+                          campaignCounts.cs > 500 ? "border-red-500 focus-visible:ring-red-500" : "border-orange-200 focus-visible:ring-valasys-orange"
+                        )}
                       />
+                      {campaignCounts.cs > 500 && (
+                        <p className="text-red-600 text-[10px] font-medium flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" /> Insufficient credits (Max: 500)
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1376,8 +1411,9 @@ export default function CampaignOverview() {
                   className={cn(
                     "p-4 rounded-lg border-2 cursor-pointer transition-all",
                     selectedLeads.mql
-                      ? "border-green-500 bg-green-50"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-valasys-orange bg-orange-50"
+                      : "border-gray-200 bg-white hover:border-gray-300",
+                    selectedLeads.mql && campaignCounts.mql > 500 && "border-red-500 bg-red-50"
                   )}
                   onClick={() => toggleLeadSelection("mql")}
                 >
@@ -1387,6 +1423,7 @@ export default function CampaignOverview() {
                         checked={selectedLeads.mql}
                         onCheckedChange={() => toggleLeadSelection("mql")}
                         onClick={(e) => e.stopPropagation()}
+                        className="rounded-none data-[state=checked]:bg-valasys-orange data-[state=checked]:border-valasys-orange"
                       />
                       <div>
                         <h3 className="font-semibold text-gray-900 text-sm">
@@ -1395,12 +1432,15 @@ export default function CampaignOverview() {
                         <p className="text-xs text-gray-600 mt-0.5">Marketing Qualified</p>
                       </div>
                     </div>
-                    <div className="text-2xl font-bold text-green-600">
+                    <div className={cn(
+                      "text-xl font-bold",
+                      selectedLeads.mql && campaignCounts.mql > 500 ? "text-red-600" : "text-valasys-orange"
+                    )}>
                       {campaignCounts.mql}
                     </div>
                   </div>
                   {selectedLeads.mql && (
-                    <div className="mt-3">
+                    <div className="mt-3 space-y-2">
                       <Input
                         type="number"
                         min="0"
@@ -1408,8 +1448,16 @@ export default function CampaignOverview() {
                         value={campaignCounts.mql}
                         onChange={(e) => handleCountChange("mql", e.target.value)}
                         onClick={(e) => e.stopPropagation()}
-                        className="border-green-300 bg-white text-sm"
+                        className={cn(
+                          "bg-white text-sm",
+                          campaignCounts.mql > 500 ? "border-red-500 focus-visible:ring-red-500" : "border-orange-200 focus-visible:ring-valasys-orange"
+                        )}
                       />
+                      {campaignCounts.mql > 500 && (
+                        <p className="text-red-600 text-[10px] font-medium flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" /> Insufficient credits (Max: 500)
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1419,8 +1467,9 @@ export default function CampaignOverview() {
                   className={cn(
                     "p-4 rounded-lg border-2 cursor-pointer transition-all",
                     selectedLeads.hql
-                      ? "border-purple-500 bg-purple-50"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-valasys-orange bg-orange-50"
+                      : "border-gray-200 bg-white hover:border-gray-300",
+                    selectedLeads.hql && campaignCounts.hql > 500 && "border-red-500 bg-red-50"
                   )}
                   onClick={() => toggleLeadSelection("hql")}
                 >
@@ -1430,6 +1479,7 @@ export default function CampaignOverview() {
                         checked={selectedLeads.hql}
                         onCheckedChange={() => toggleLeadSelection("hql")}
                         onClick={(e) => e.stopPropagation()}
+                        className="rounded-none data-[state=checked]:bg-valasys-orange data-[state=checked]:border-valasys-orange"
                       />
                       <div>
                         <h3 className="font-semibold text-gray-900 text-sm">
@@ -1438,12 +1488,15 @@ export default function CampaignOverview() {
                         <p className="text-xs text-gray-600 mt-0.5">Highly Qualified</p>
                       </div>
                     </div>
-                    <div className="text-2xl font-bold text-purple-600">
+                    <div className={cn(
+                      "text-xl font-bold",
+                      selectedLeads.hql && campaignCounts.hql > 500 ? "text-red-600" : "text-valasys-orange"
+                    )}>
                       {campaignCounts.hql}
                     </div>
                   </div>
                   {selectedLeads.hql && (
-                    <div className="mt-3">
+                    <div className="mt-3 space-y-2">
                       <Input
                         type="number"
                         min="0"
@@ -1451,8 +1504,16 @@ export default function CampaignOverview() {
                         value={campaignCounts.hql}
                         onChange={(e) => handleCountChange("hql", e.target.value)}
                         onClick={(e) => e.stopPropagation()}
-                        className="border-purple-300 bg-white text-sm"
+                        className={cn(
+                          "bg-white text-sm",
+                          campaignCounts.hql > 500 ? "border-red-500 focus-visible:ring-red-500" : "border-orange-200 focus-visible:ring-valasys-orange"
+                        )}
                       />
+                      {campaignCounts.hql > 500 && (
+                        <p className="text-red-600 text-[10px] font-medium flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" /> Insufficient credits (Max: 500)
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1462,8 +1523,9 @@ export default function CampaignOverview() {
                   className={cn(
                     "p-4 rounded-lg border-2 cursor-pointer transition-all",
                     selectedLeads.bantVpi
-                      ? "border-amber-500 bg-amber-50"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-valasys-orange bg-orange-50"
+                      : "border-gray-200 bg-white hover:border-gray-300",
+                    selectedLeads.bantVpi && campaignCounts.bantVpi > 500 && "border-red-500 bg-red-50"
                   )}
                   onClick={() => toggleLeadSelection("bantVpi")}
                 >
@@ -1473,6 +1535,7 @@ export default function CampaignOverview() {
                         checked={selectedLeads.bantVpi}
                         onCheckedChange={() => toggleLeadSelection("bantVpi")}
                         onClick={(e) => e.stopPropagation()}
+                        className="rounded-none data-[state=checked]:bg-valasys-orange data-[state=checked]:border-valasys-orange"
                       />
                       <div>
                         <h3 className="font-semibold text-gray-900 text-sm">
@@ -1481,12 +1544,15 @@ export default function CampaignOverview() {
                         <p className="text-xs text-gray-600 mt-0.5">High Intent</p>
                       </div>
                     </div>
-                    <div className="text-2xl font-bold text-amber-600">
+                    <div className={cn(
+                      "text-xl font-bold",
+                      selectedLeads.bantVpi && campaignCounts.bantVpi > 500 ? "text-red-600" : "text-valasys-orange"
+                    )}>
                       {campaignCounts.bantVpi}
                     </div>
                   </div>
                   {selectedLeads.bantVpi && (
-                    <div className="mt-3">
+                    <div className="mt-3 space-y-2">
                       <Input
                         type="number"
                         min="0"
@@ -1494,8 +1560,16 @@ export default function CampaignOverview() {
                         value={campaignCounts.bantVpi}
                         onChange={(e) => handleCountChange("bantVpi", e.target.value)}
                         onClick={(e) => e.stopPropagation()}
-                        className="border-amber-300 bg-white text-sm"
+                        className={cn(
+                          "bg-white text-sm",
+                          campaignCounts.bantVpi > 500 ? "border-red-500 focus-visible:ring-red-500" : "border-orange-200 focus-visible:ring-valasys-orange"
+                        )}
                       />
+                      {campaignCounts.bantVpi > 500 && (
+                        <p className="text-red-600 text-[10px] font-medium flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" /> Insufficient credits (Max: 500)
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1503,10 +1577,11 @@ export default function CampaignOverview() {
                 {/* Webinar Card */}
                 <div
                   className={cn(
-                    "p-4 rounded-lg border-2 cursor-pointer transition-all col-span-2 sm:col-span-1",
+                    "p-4 rounded-lg border-2 cursor-pointer transition-all",
                     selectedLeads.webinar
-                      ? "border-pink-500 bg-pink-50"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-valasys-orange bg-orange-50"
+                      : "border-gray-200 bg-white hover:border-gray-300",
+                    selectedLeads.webinar && campaignCounts.webinar > 500 && "border-red-500 bg-red-50"
                   )}
                   onClick={() => toggleLeadSelection("webinar")}
                 >
@@ -1516,6 +1591,7 @@ export default function CampaignOverview() {
                         checked={selectedLeads.webinar}
                         onCheckedChange={() => toggleLeadSelection("webinar")}
                         onClick={(e) => e.stopPropagation()}
+                        className="rounded-none data-[state=checked]:bg-valasys-orange data-[state=checked]:border-valasys-orange"
                       />
                       <div>
                         <h3 className="font-semibold text-gray-900 text-sm">
@@ -1524,12 +1600,15 @@ export default function CampaignOverview() {
                         <p className="text-xs text-gray-600 mt-0.5">Attendees</p>
                       </div>
                     </div>
-                    <div className="text-2xl font-bold text-pink-600">
+                    <div className={cn(
+                      "text-xl font-bold",
+                      selectedLeads.webinar && campaignCounts.webinar > 500 ? "text-red-600" : "text-valasys-orange"
+                    )}>
                       {campaignCounts.webinar}
                     </div>
                   </div>
                   {selectedLeads.webinar && (
-                    <div className="mt-3">
+                    <div className="mt-3 space-y-2">
                       <Input
                         type="number"
                         min="0"
@@ -1537,8 +1616,16 @@ export default function CampaignOverview() {
                         value={campaignCounts.webinar}
                         onChange={(e) => handleCountChange("webinar", e.target.value)}
                         onClick={(e) => e.stopPropagation()}
-                        className="border-pink-300 bg-white text-sm"
+                        className={cn(
+                          "bg-white text-sm",
+                          campaignCounts.webinar > 500 ? "border-red-500 focus-visible:ring-red-500" : "border-orange-200 focus-visible:ring-valasys-orange"
+                        )}
                       />
+                      {campaignCounts.webinar > 500 && (
+                        <p className="text-red-600 text-[10px] font-medium flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" /> Insufficient credits (Max: 500)
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1555,8 +1642,57 @@ export default function CampaignOverview() {
               <Button
                 className="bg-green-600 hover:bg-green-700"
                 onClick={handleAcceptCampaign}
+                disabled={Object.entries(campaignCounts).some(([key, count]) => selectedLeads[key as keyof typeof selectedLeads] && count > 500)}
               >
                 Confirm & Accept
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        {/* Decline Campaign Confirmation Modal */}
+        <Dialog
+          open={isDeclineModalOpen}
+          onOpenChange={(open) => {
+            setIsDeclineModalOpen(open);
+            if (!open) setDeclineRemark("");
+          }}
+        >
+          <DialogContent className="max-w-[95vw] sm:max-w-[85vw] md:max-w-[500px] lg:max-w-[400px]">
+            <DialogHeader>
+              <DialogTitle className="text-xl">Decline Campaign</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to decline this campaign request? Please
+                provide a reason for declining.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="py-4">
+              <Label htmlFor="declineRemark" className="mb-2 block text-sm font-medium">
+                Remark / Reason for declining
+              </Label>
+              <Textarea
+                id="declineRemark"
+                placeholder="Enter your remark here..."
+                value={declineRemark}
+                onChange={(e) => setDeclineRemark(e.target.value)}
+                className="min-h-[100px] focus-visible:ring-valasys-orange"
+              />
+            </div>
+
+            <DialogFooter className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setIsDeclineModalOpen(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-red-600 hover:bg-red-700 text-white flex-1"
+                onClick={handleConfirmDecline}
+                disabled={!declineRemark.trim()}
+              >
+                Confirm
               </Button>
             </DialogFooter>
           </DialogContent>
