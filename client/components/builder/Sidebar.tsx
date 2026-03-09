@@ -41,11 +41,11 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ type, label, icon }) => {
     <div
       ref={drag}
       className={cn(
-        "flex items-center gap-3 p-3 mb-2 rounded-lg border bg-white cursor-move hover:border-blue-500 hover:text-blue-500 transition-colors shadow-sm group",
-        isDragging && "opacity-50 border-blue-500",
+        "flex items-center gap-3 p-3 mb-2 rounded-lg border bg-white cursor-move hover:border-valasys-orange hover:text-valasys-orange transition-colors shadow-sm group",
+        isDragging && "opacity-50 border-valasys-orange",
       )}
     >
-      <div className="text-gray-400 group-hover:text-blue-500 transition-colors">
+      <div className="text-gray-400 group-hover:text-valasys-orange transition-colors">
         {icon}
       </div>
       <span className="text-xs font-semibold">{label}</span>

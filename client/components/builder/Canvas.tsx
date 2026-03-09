@@ -91,7 +91,7 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack }) => {
             <div className="h-6 w-px bg-gray-200" />
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-gray-900 tracking-tight">New Page</span>
-              <span className="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full font-black uppercase tracking-wider">
+              <span className="text-[10px] px-2 py-0.5 bg-valasys-orange/10 text-valasys-orange rounded-full font-black uppercase tracking-wider">
                 Editing
               </span>
             </div>
@@ -101,7 +101,7 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack }) => {
             <button className="text-sm font-medium px-4 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
               Preview
             </button>
-            <button className="text-sm font-medium px-4 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm">
+            <button className="text-sm font-medium px-4 py-1.5 rounded-lg bg-valasys-orange text-white hover:bg-valasys-orange/90 transition-colors shadow-sm">
               Publish
             </button>
           </div>
@@ -112,7 +112,7 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack }) => {
             ref={drop}
             className={cn(
               "max-w-5xl mx-auto min-h-full transition-all duration-200 ease-in-out p-6 rounded-xl",
-              isOver && canDrop && "bg-blue-50/50 ring-2 ring-blue-500 ring-dashed",
+              isOver && canDrop && "bg-valasys-orange/5 ring-2 ring-valasys-orange ring-dashed",
               layout.length === 0 && "bg-white border-2 border-dashed border-gray-300 flex items-center justify-center h-full",
             )}
           >

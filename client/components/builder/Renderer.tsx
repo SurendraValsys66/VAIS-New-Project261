@@ -74,7 +74,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
         ref={drop}
         className={cn(
           "min-h-[50px] transition-colors rounded-md border border-dashed border-gray-200 p-2",
-          isOver && canDrop && "bg-blue-50 border-blue-300",
+          isOver && canDrop && "bg-valasys-orange/5 border-valasys-orange/30",
           component.type === "row" && "flex flex-wrap -mx-2",
           component.type === "section" && "space-y-4 p-4",
           component.type === "column" && "p-2 h-full flex flex-col gap-2",
@@ -116,7 +116,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
       <div
         ref={drag}
         className={cn(
-          "group relative border border-transparent hover:border-blue-500 rounded-md transition-all",
+          "group relative border border-transparent hover:border-valasys-orange rounded-md transition-all",
           isDragging && "opacity-30",
           component.type === "section" && "my-4",
           component.type === "column" && "w-full md:w-auto h-full",
@@ -128,11 +128,11 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
           ...(component.height ? { minHeight: `${component.height}px` } : {}),
         }}
       >
-        <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 flex items-center bg-blue-500 rounded-bl-md text-white px-1 z-30 transition-opacity">
+        <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 flex items-center bg-valasys-orange rounded-bl-md text-white px-1 z-30 transition-opacity">
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 text-white hover:text-white hover:bg-blue-600"
+            className="h-6 w-6 text-white hover:text-white hover:bg-valasys-orange/90"
             onClick={() => onRemove(component.id)}
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -143,7 +143,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
         </div>
 
         {component.type === "column" && (
-          <div className="absolute bottom-0 left-0 right-0 opacity-0 group-hover:opacity-100 flex items-center justify-between bg-blue-500/10 px-2 py-1 z-20 text-[10px] font-bold text-blue-600 pointer-events-none">
+          <div className="absolute bottom-0 left-0 right-0 opacity-0 group-hover:opacity-100 flex items-center justify-between bg-valasys-orange/5 px-2 py-1 z-20 text-[10px] font-bold text-valasys-orange pointer-events-none">
             <div className="flex items-center gap-1 pointer-events-auto">
               <Button
                 variant="ghost"
@@ -174,7 +174,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
 
         {isResizable && (
           <div
-            className="absolute bottom-0 left-0 right-0 h-1.5 cursor-ns-resize opacity-0 group-hover:opacity-100 bg-blue-400/50 hover:bg-blue-500 transition-all z-20"
+            className="absolute bottom-0 left-0 right-0 h-1.5 cursor-ns-resize opacity-0 group-hover:opacity-100 bg-valasys-orange/30 hover:bg-valasys-orange transition-all z-20"
             onMouseDown={(e) => {
               e.preventDefault();
               const startY = e.clientY;
@@ -219,8 +219,8 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
       );
     case "column":
       return wrapWithControls(
-        <div className="bg-blue-50/10 rounded border border-blue-100/20 min-h-[60px]">
-          <div className="px-1 py-0.5 text-[8px] uppercase font-bold text-blue-200">Column</div>
+        <div className="bg-valasys-orange/5 rounded border border-valasys-orange/10 min-h-[60px]">
+          <div className="px-1 py-0.5 text-[8px] uppercase font-bold text-valasys-orange/40">Column</div>
           {renderChildren()}
         </div>,
       );
@@ -253,7 +253,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
     case "button":
       return wrapWithControls(
         <div className="p-4 h-full flex items-center justify-start">
-          <Button className="px-8 py-6 text-lg font-semibold rounded-xl shadow-lg bg-blue-600 hover:bg-blue-700">
+          <Button className="px-8 py-6 text-lg font-semibold rounded-xl shadow-lg bg-valasys-orange hover:bg-valasys-orange/90">
             Get Started
           </Button>
         </div>,
@@ -272,7 +272,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
           <div className="h-full aspect-video bg-black/90 flex items-center justify-center rounded-2xl shadow-xl overflow-hidden relative group/video">
             <Play className="w-16 h-16 text-white opacity-50 group-hover/video:opacity-100 transition-opacity" />
             <div className="absolute bottom-4 left-4 right-4 h-1 bg-white/20 rounded-full overflow-hidden">
-              <div className="w-1/3 h-full bg-blue-500" />
+              <div className="w-1/3 h-full bg-valasys-orange" />
             </div>
           </div>
         </div>,
@@ -288,9 +288,9 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
     case "hero":
       return wrapWithControls(
         <div className="relative overflow-hidden bg-white p-12 lg:p-24 flex flex-col items-center text-center gap-6 rounded-3xl border border-gray-100">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none" />
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-valasys-orange/5 to-transparent pointer-events-none" />
           <div
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wider"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-valasys-orange/10 text-valasys-orange text-xs font-bold uppercase tracking-wider"
             contentEditable
             suppressContentEditableWarning
           >
@@ -300,7 +300,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
             className="text-5xl lg:text-7xl font-black text-gray-900 tracking-tight leading-none max-w-4xl"
             contentEditable
             suppressContentEditableWarning
-            dangerouslySetInnerHTML={{ __html: 'Build your vision <span class="text-blue-600">faster</span> than ever.' }}
+            dangerouslySetInnerHTML={{ __html: 'Build your vision <span class="text-valasys-orange">faster</span> than ever.' }}
           />
           <p
             className="text-xl text-gray-600 max-w-2xl leading-relaxed"
@@ -311,7 +311,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
             days.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
-            <Button className="px-10 py-7 text-xl font-bold rounded-2xl bg-blue-600 shadow-xl hover:shadow-2xl transition-all">
+            <Button className="px-10 py-7 text-xl font-bold rounded-2xl bg-valasys-orange shadow-xl hover:shadow-2xl transition-all hover:bg-valasys-orange/90">
               Start Free Trial
             </Button>
             <Button
@@ -338,7 +338,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[1, 2, 3].map((i) => (
               <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-                <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center font-bold">
+                <div className="w-12 h-12 bg-valasys-orange/10 text-valasys-orange rounded-xl flex items-center justify-center font-bold">
                   0{i}
                 </div>
                 <h3 className="text-xl font-bold" contentEditable suppressContentEditableWarning>
@@ -366,11 +366,11 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
                 key={plan}
                 className={cn(
                   "p-8 rounded-3xl border-2 transition-all space-y-6 flex flex-col",
-                  i === 1 ? "border-blue-500 shadow-2xl scale-105 relative z-10" : "border-gray-100",
+                  i === 1 ? "border-valasys-orange shadow-2xl scale-105 relative z-10" : "border-gray-100",
                 )}
               >
                 {i === 1 && (
-                  <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-500 text-white text-[10px] font-black rounded-full uppercase">
+                  <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-valasys-orange text-white text-[10px] font-black rounded-full uppercase">
                     Most Popular
                   </span>
                 )}
@@ -392,7 +392,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
                 <Button
                   className={cn(
                     "w-full py-6 font-bold rounded-xl",
-                    i === 1 ? "bg-blue-600" : "bg-gray-900",
+                    i === 1 ? "bg-valasys-orange hover:bg-valasys-orange/90" : "bg-gray-900",
                   )}
                 >
                   Choose {plan}
@@ -405,7 +405,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
 
     case "testimonials":
       return wrapWithControls(
-        <div className="p-12 bg-blue-600 rounded-3xl text-white relative overflow-hidden">
+        <div className="p-12 bg-valasys-orange rounded-3xl text-white relative overflow-hidden">
           <Quote className="absolute top-8 left-8 w-24 h-24 opacity-10" />
           <div className="relative z-10 flex flex-col items-center text-center gap-8">
             <div className="flex gap-1">
@@ -418,14 +418,14 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
               incredibly intuitive and powerful at the same time."
             </p>
             <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 rounded-full bg-blue-400 border-4 border-white/20 overflow-hidden">
+              <div className="w-16 h-16 rounded-full bg-valasys-orange-light/20 border-4 border-white/20 overflow-hidden">
                 <img src="https://i.pravatar.cc/150?u=jane" alt="Jane" />
               </div>
               <div>
                 <div className="font-bold text-lg" contentEditable suppressContentEditableWarning>
                   Jane Cooper
                 </div>
-                <div className="text-blue-200 text-sm" contentEditable suppressContentEditableWarning>
+                <div className="text-valasys-orange-light text-sm" contentEditable suppressContentEditableWarning>
                   CEO at TechFlow
                 </div>
               </div>
@@ -475,16 +475,16 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
 
     case "cta":
       return wrapWithControls(
-        <div className="p-16 bg-gradient-to-tr from-gray-900 to-blue-900 rounded-3xl text-white text-center flex flex-col items-center gap-8">
+        <div className="p-16 bg-gradient-to-tr from-gray-900 to-valasys-gray-900 rounded-3xl text-white text-center flex flex-col items-center gap-8">
           <h2 className="text-4xl font-black" contentEditable suppressContentEditableWarning>
             Ready to start building?
           </h2>
-          <p className="text-blue-100 max-w-xl" contentEditable suppressContentEditableWarning>
+          <p className="text-white/80 max-w-xl" contentEditable suppressContentEditableWarning>
             Join over 10,000+ creators and start building your landing pages today. No credit card
             required.
           </p>
           <div className="flex gap-4">
-            <Button className="bg-white text-blue-900 hover:bg-gray-100 px-8 py-6 rounded-xl font-bold shadow-xl">
+            <Button className="bg-white text-valasys-gray-900 hover:bg-gray-100 px-8 py-6 rounded-xl font-bold shadow-xl">
               Get Started Now
             </Button>
             <Button variant="ghost" className="text-white border border-white/20 rounded-xl px-8 py-6 font-bold">
@@ -519,7 +519,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
             <label className="text-xs font-bold text-gray-400 uppercase">Message</label>
             <div className="h-32 bg-gray-50 rounded-xl border border-gray-100" />
           </div>
-          <Button className="w-full py-6 rounded-xl bg-blue-600 font-bold shadow-lg">
+          <Button className="w-full py-6 rounded-xl bg-valasys-orange hover:bg-valasys-orange/90 font-bold shadow-lg">
             Send Message
           </Button>
         </div>,
