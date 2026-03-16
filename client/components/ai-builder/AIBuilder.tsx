@@ -201,14 +201,31 @@ export const AIBuilder: React.FC<AIBuilderProps> = ({ onBack, onGenerateComplete
 
         {/* Input Section */}
         <div className="w-full max-w-2xl">
-          <Textarea
-            placeholder="Type your landing page description..."
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            disabled={isGenerating}
-            rows={3}
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-valasys-orange focus:border-valasys-orange text-base resize-none"
-          />
+          <div className="relative">
+            <Textarea
+              placeholder="Type your landing page description..."
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              disabled={isGenerating}
+              rows={3}
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-valasys-orange focus:border-valasys-orange text-base resize-none pr-32"
+            />
+            {/* Model Dropdown at Bottom Right */}
+            <div className="absolute bottom-3 right-3">
+              <select
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                disabled={isGenerating}
+                className="px-3 py-1 rounded-md border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:border-valasys-orange focus:outline-none focus:ring-2 focus:ring-valasys-orange cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {AI_MODELS.map((model) => (
+                  <option key={model} value={model}>
+                    {model}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
       </div>
     </DashboardLayout>
