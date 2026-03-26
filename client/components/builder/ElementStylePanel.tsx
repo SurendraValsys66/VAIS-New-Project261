@@ -41,6 +41,11 @@ interface SizingUnits {
   fontSize: "%" | "px";
 }
 
+interface SpacingUnits {
+  paddingUnit: "%" | "px";
+  marginUnit: "%" | "px";
+}
+
 export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
   component,
   onUpdate,
@@ -74,6 +79,11 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     width: "%",
     height: "px",
     fontSize: "px",
+  });
+
+  const [spacingUnits, setSpacingUnits] = React.useState<SpacingUnits>({
+    paddingUnit: "px",
+    marginUnit: "px",
   });
 
   const [expandedSections, setExpandedSections] = React.useState({
@@ -194,6 +204,21 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
       // Update the component with the unit
       const updates: any = {};
       updates[`${property}Unit`] = newUnit; // Store the unit (widthUnit, heightUnit, fontSizeUnit)
+      onUpdate(updates);
+    },
+    [onUpdate]
+  );
+
+  const handleSpacingUnitChange = React.useCallback(
+    (property: keyof SpacingUnits, newUnit: "%" | "px") => {
+      setSpacingUnits((prev) => ({
+        ...prev,
+        [property]: newUnit,
+      }));
+
+      // Update the component with the unit
+      const updates: any = {};
+      updates[`${property}`] = newUnit;
       onUpdate(updates);
     },
     [onUpdate]
@@ -477,15 +502,25 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
                     Padding
                     <span className="text-gray-400 text-xs">ⓘ</span>
                   </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={spacing.groupPadding}
-                      onChange={handleGroupPaddingToggle}
-                      className="w-3 h-3"
-                    />
-                    <span className="text-xs text-gray-600">Group sides</span>
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={spacingUnits.paddingUnit}
+                      onChange={(e) => handleSpacingUnitChange("paddingUnit", e.target.value as "%" | "px")}
+                      className="px-2 py-1 h-6 border border-gray-200 rounded text-xs font-medium bg-white cursor-pointer hover:border-gray-300 transition-colors"
+                    >
+                      <option value="px">px</option>
+                      <option value="%">%</option>
+                    </select>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={spacing.groupPadding}
+                        onChange={handleGroupPaddingToggle}
+                        className="w-3 h-3"
+                      />
+                      <span className="text-xs text-gray-600">Group sides</span>
+                    </label>
+                  </div>
                 </div>
 
                 {spacing.groupPadding ? (
@@ -495,20 +530,26 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
                       type="number"
                       value={styles.paddingTop}
                       onChange={(e) => {
-                        const value = e.target.value;
+                        let value = e.target.value;
+                        if (spacingUnits.paddingUnit === "%" && Number(value) > 100) {
+                          value = "100";
+                        }
                         handleStyleChange("paddingTop", value);
                         handleStyleChange("paddingRight", value);
                         handleStyleChange("paddingBottom", value);
                         handleStyleChange("paddingLeft", value);
                       }}
                       placeholder="0"
+                      max={spacingUnits.paddingUnit === "%" ? 100 : undefined}
                       className="w-12 text-xs h-7"
                     />
-                    <span className="text-xs text-gray-400">px</span>
+                    <span className="text-xs text-gray-400">{spacingUnits.paddingUnit}</span>
                     <div className="flex flex-col gap-0 ml-auto">
                       <button
                         onClick={() => {
-                          const val = String(Number(styles.paddingTop) + 1);
+                          const current = Number(styles.paddingTop);
+                          const newVal = spacingUnits.paddingUnit === "%" ? Math.min(100, current + 1) : current + 1;
+                          const val = String(newVal);
                           handleStyleChange("paddingTop", val);
                           handleStyleChange("paddingRight", val);
                           handleStyleChange("paddingBottom", val);
@@ -545,13 +586,24 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
                         <Input
                           type="number"
                           value={styles[propKey as keyof StyleState]}
-                          onChange={(e) => handleStyleChange(propKey as keyof StyleState, e.target.value)}
+                          onChange={(e) => {
+                            let value = e.target.value;
+                            if (spacingUnits.paddingUnit === "%" && Number(value) > 100) {
+                              value = "100";
+                            }
+                            handleStyleChange(propKey as keyof StyleState, value);
+                          }}
+                          max={spacingUnits.paddingUnit === "%" ? 100 : undefined}
                           className="w-10 text-xs h-7"
                         />
-                        <span className="text-xs text-gray-400">px</span>
+                        <span className="text-xs text-gray-400">{spacingUnits.paddingUnit}</span>
                         <div className="flex flex-col gap-0">
                           <button
-                            onClick={() => handleStyleChange(propKey as keyof StyleState, String(Number(styles[propKey as keyof StyleState]) + 1))}
+                            onClick={() => {
+                              const current = Number(styles[propKey as keyof StyleState]);
+                              const newVal = spacingUnits.paddingUnit === "%" ? Math.min(100, current + 1) : current + 1;
+                              handleStyleChange(propKey as keyof StyleState, String(newVal));
+                            }}
                             className="text-xs text-gray-600 hover:text-gray-900 leading-3"
                           >
                             ▲
@@ -576,15 +628,25 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
                     Margin
                     <span className="text-gray-400 text-xs">ⓘ</span>
                   </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={spacing.groupMargin}
-                      onChange={handleGroupMarginToggle}
-                      className="w-3 h-3"
-                    />
-                    <span className="text-xs text-gray-600">Group sides</span>
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={spacingUnits.marginUnit}
+                      onChange={(e) => handleSpacingUnitChange("marginUnit", e.target.value as "%" | "px")}
+                      className="px-2 py-1 h-6 border border-gray-200 rounded text-xs font-medium bg-white cursor-pointer hover:border-gray-300 transition-colors"
+                    >
+                      <option value="px">px</option>
+                      <option value="%">%</option>
+                    </select>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={spacing.groupMargin}
+                        onChange={handleGroupMarginToggle}
+                        className="w-3 h-3"
+                      />
+                      <span className="text-xs text-gray-600">Group sides</span>
+                    </label>
+                  </div>
                 </div>
 
                 {spacing.groupMargin ? (
@@ -594,20 +656,26 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
                       type="number"
                       value={styles.marginTop}
                       onChange={(e) => {
-                        const value = e.target.value;
+                        let value = e.target.value;
+                        if (spacingUnits.marginUnit === "%" && Number(value) > 100) {
+                          value = "100";
+                        }
                         handleStyleChange("marginTop", value);
                         handleStyleChange("marginRight", value);
                         handleStyleChange("marginBottom", value);
                         handleStyleChange("marginLeft", value);
                       }}
                       placeholder="0"
+                      max={spacingUnits.marginUnit === "%" ? 100 : undefined}
                       className="w-12 text-xs h-7"
                     />
-                    <span className="text-xs text-gray-400">px</span>
+                    <span className="text-xs text-gray-400">{spacingUnits.marginUnit}</span>
                     <div className="flex flex-col gap-0 ml-auto">
                       <button
                         onClick={() => {
-                          const val = String(Number(styles.marginTop) + 1);
+                          const current = Number(styles.marginTop);
+                          const newVal = spacingUnits.marginUnit === "%" ? Math.min(100, current + 1) : current + 1;
+                          const val = String(newVal);
                           handleStyleChange("marginTop", val);
                           handleStyleChange("marginRight", val);
                           handleStyleChange("marginBottom", val);
@@ -644,13 +712,24 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
                         <Input
                           type="number"
                           value={styles[propKey as keyof StyleState]}
-                          onChange={(e) => handleStyleChange(propKey as keyof StyleState, e.target.value)}
+                          onChange={(e) => {
+                            let value = e.target.value;
+                            if (spacingUnits.marginUnit === "%" && Number(value) > 100) {
+                              value = "100";
+                            }
+                            handleStyleChange(propKey as keyof StyleState, value);
+                          }}
+                          max={spacingUnits.marginUnit === "%" ? 100 : undefined}
                           className="w-10 text-xs h-7"
                         />
-                        <span className="text-xs text-gray-400">px</span>
+                        <span className="text-xs text-gray-400">{spacingUnits.marginUnit}</span>
                         <div className="flex flex-col gap-0">
                           <button
-                            onClick={() => handleStyleChange(propKey as keyof StyleState, String(Number(styles[propKey as keyof StyleState]) + 1))}
+                            onClick={() => {
+                              const current = Number(styles[propKey as keyof StyleState]);
+                              const newVal = spacingUnits.marginUnit === "%" ? Math.min(100, current + 1) : current + 1;
+                              handleStyleChange(propKey as keyof StyleState, String(newVal));
+                            }}
                             className="text-xs text-gray-600 hover:text-gray-900 leading-3"
                           >
                             ▲
