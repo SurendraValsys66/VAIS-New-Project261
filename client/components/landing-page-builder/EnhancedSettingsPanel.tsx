@@ -76,6 +76,55 @@ const NumberInput: React.FC<{
   </div>
 );
 
+const SpacingInput: React.FC<{
+  label: string;
+  fullLabel: string;
+  value: string | number;
+  unit: "px" | "%";
+  onValueChange: (value: string) => void;
+  onUnitChange: (unit: "px" | "%") => void;
+}> = ({ label, fullLabel, value, unit, onValueChange, onUnitChange }) => (
+  <div className="flex items-center gap-2" title={fullLabel}>
+    <span className="text-xs font-semibold text-gray-600 w-5">{label}</span>
+    <Input
+      type="number"
+      value={value}
+      onChange={(e) => onValueChange(e.target.value)}
+      className="w-12 text-xs h-8 text-center"
+      placeholder="0"
+    />
+    <Select value={unit} onValueChange={(val) => onUnitChange(val as "px" | "%")}>
+      <SelectTrigger className="w-16 h-8 text-xs">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="px">px</SelectItem>
+        <SelectItem value="%">%</SelectItem>
+      </SelectContent>
+    </Select>
+    <button
+      onClick={() => {
+        const current = Number(value || "0");
+        onValueChange(String(current + 1));
+      }}
+      className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded text-sm"
+      title="Increase"
+    >
+      ▲
+    </button>
+    <button
+      onClick={() => {
+        const current = Number(value || "0");
+        onValueChange(String(Math.max(0, current - 1)));
+      }}
+      className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded text-sm"
+      title="Decrease"
+    >
+      ▼
+    </button>
+  </div>
+);
+
 export const EnhancedSettingsPanel: React.FC<EnhancedSettingsPanelProps> = ({
   block,
   onBlockUpdate,
@@ -1038,55 +1087,162 @@ export const EnhancedSettingsPanel: React.FC<EnhancedSettingsPanelProps> = ({
                 )}
               </div>
               {expandedSections.has("padding") && (
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { key: "paddingTop" },
-                    { key: "paddingRight" },
-                    { key: "paddingBottom" },
-                    { key: "paddingLeft" },
-                  ].map(({ key }) => (
-                    <div key={key} className="flex gap-1 items-center">
-                      <span className="text-xs text-gray-500">⊞</span>
-                      <Input
-                        type="number"
-                        value={props[key as keyof typeof props] || "0"}
-                        onChange={(e) =>
-                          onBlockUpdate({
-                            ...block,
-                            properties: { ...props, [key]: e.target.value },
-                          })
-                        }
-                        className="w-12 text-xs h-8"
-                      />
-                      <span className="text-xs text-gray-500 w-5">px</span>
-                      <div className="flex flex-col gap-0">
-                        <button
-                          onClick={() => {
-                            const current = Number(props[key as keyof typeof props] || "0");
-                            onBlockUpdate({
-                              ...block,
-                              properties: { ...props, [key]: String(current + 1) },
-                            });
-                          }}
-                          className="text-xs text-gray-600 hover:text-gray-900 leading-none"
-                        >
-                          ▲
-                        </button>
-                        <button
-                          onClick={() => {
-                            const current = Number(props[key as keyof typeof props] || "0");
-                            onBlockUpdate({
-                              ...block,
-                              properties: { ...props, [key]: String(Math.max(0, current - 1)) },
-                            });
-                          }}
-                          className="text-xs text-gray-600 hover:text-gray-900 leading-none"
-                        >
-                          ▼
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                <div className="space-y-2">
+                  {/* Top */}
+                  <SpacingInput
+                    key="paddingTop"
+                    label="⬆"
+                    fullLabel="Padding Top"
+                    value={
+                      typeof props["paddingTop"] === "string"
+                        ? (props["paddingTop"] as string).replace(/[%px]/g, "")
+                        : props["paddingTop"] || "0"
+                    }
+                    unit={
+                      typeof props["paddingTop"] === "string" &&
+                      (props["paddingTop"] as string).includes("%")
+                        ? "%"
+                        : "px"
+                    }
+                    onValueChange={(value) => {
+                      const unit =
+                        typeof props["paddingTop"] === "string" &&
+                        (props["paddingTop"] as string).includes("%")
+                          ? "%"
+                          : "px";
+                      onBlockUpdate({
+                        ...block,
+                        properties: { ...props, paddingTop: `${value}${unit}` },
+                      });
+                    }}
+                    onUnitChange={(newUnit) => {
+                      const value =
+                        typeof props["paddingTop"] === "string"
+                          ? (props["paddingTop"] as string).replace(/[%px]/g, "")
+                          : props["paddingTop"] || "0";
+                      onBlockUpdate({
+                        ...block,
+                        properties: { ...props, paddingTop: `${value}${newUnit}` },
+                      });
+                    }}
+                  />
+
+                  {/* Right & Left */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <SpacingInput
+                      key="paddingLeft"
+                      label="⬅"
+                      fullLabel="Padding Left"
+                      value={
+                        typeof props["paddingLeft"] === "string"
+                          ? (props["paddingLeft"] as string).replace(/[%px]/g, "")
+                          : props["paddingLeft"] || "0"
+                      }
+                      unit={
+                        typeof props["paddingLeft"] === "string" &&
+                        (props["paddingLeft"] as string).includes("%")
+                          ? "%"
+                          : "px"
+                      }
+                      onValueChange={(value) => {
+                        const unit =
+                          typeof props["paddingLeft"] === "string" &&
+                          (props["paddingLeft"] as string).includes("%")
+                            ? "%"
+                            : "px";
+                        onBlockUpdate({
+                          ...block,
+                          properties: { ...props, paddingLeft: `${value}${unit}` },
+                        });
+                      }}
+                      onUnitChange={(newUnit) => {
+                        const value =
+                          typeof props["paddingLeft"] === "string"
+                            ? (props["paddingLeft"] as string).replace(/[%px]/g, "")
+                            : props["paddingLeft"] || "0";
+                        onBlockUpdate({
+                          ...block,
+                          properties: { ...props, paddingLeft: `${value}${newUnit}` },
+                        });
+                      }}
+                    />
+                    <SpacingInput
+                      key="paddingRight"
+                      label="➡"
+                      fullLabel="Padding Right"
+                      value={
+                        typeof props["paddingRight"] === "string"
+                          ? (props["paddingRight"] as string).replace(/[%px]/g, "")
+                          : props["paddingRight"] || "0"
+                      }
+                      unit={
+                        typeof props["paddingRight"] === "string" &&
+                        (props["paddingRight"] as string).includes("%")
+                          ? "%"
+                          : "px"
+                      }
+                      onValueChange={(value) => {
+                        const unit =
+                          typeof props["paddingRight"] === "string" &&
+                          (props["paddingRight"] as string).includes("%")
+                            ? "%"
+                            : "px";
+                        onBlockUpdate({
+                          ...block,
+                          properties: { ...props, paddingRight: `${value}${unit}` },
+                        });
+                      }}
+                      onUnitChange={(newUnit) => {
+                        const value =
+                          typeof props["paddingRight"] === "string"
+                            ? (props["paddingRight"] as string).replace(/[%px]/g, "")
+                            : props["paddingRight"] || "0";
+                        onBlockUpdate({
+                          ...block,
+                          properties: { ...props, paddingRight: `${value}${newUnit}` },
+                        });
+                      }}
+                    />
+                  </div>
+
+                  {/* Bottom */}
+                  <SpacingInput
+                    key="paddingBottom"
+                    label="⬇"
+                    fullLabel="Padding Bottom"
+                    value={
+                      typeof props["paddingBottom"] === "string"
+                        ? (props["paddingBottom"] as string).replace(/[%px]/g, "")
+                        : props["paddingBottom"] || "0"
+                    }
+                    unit={
+                      typeof props["paddingBottom"] === "string" &&
+                      (props["paddingBottom"] as string).includes("%")
+                        ? "%"
+                        : "px"
+                    }
+                    onValueChange={(value) => {
+                      const unit =
+                        typeof props["paddingBottom"] === "string" &&
+                        (props["paddingBottom"] as string).includes("%")
+                          ? "%"
+                          : "px";
+                      onBlockUpdate({
+                        ...block,
+                        properties: { ...props, paddingBottom: `${value}${unit}` },
+                      });
+                    }}
+                    onUnitChange={(newUnit) => {
+                      const value =
+                        typeof props["paddingBottom"] === "string"
+                          ? (props["paddingBottom"] as string).replace(/[%px]/g, "")
+                          : props["paddingBottom"] || "0";
+                      onBlockUpdate({
+                        ...block,
+                        properties: { ...props, paddingBottom: `${value}${newUnit}` },
+                      });
+                    }}
+                  />
                 </div>
               )}
             </div>
@@ -1107,55 +1263,162 @@ export const EnhancedSettingsPanel: React.FC<EnhancedSettingsPanelProps> = ({
                 )}
               </div>
               {expandedSections.has("margin") && (
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { key: "marginTop" },
-                    { key: "marginRight" },
-                    { key: "marginBottom" },
-                    { key: "marginLeft" },
-                  ].map(({ key }) => (
-                    <div key={key} className="flex gap-1 items-center">
-                      <span className="text-xs text-gray-500">⊞</span>
-                      <Input
-                        type="number"
-                        value={props[key as keyof typeof props] || "0"}
-                        onChange={(e) =>
-                          onBlockUpdate({
-                            ...block,
-                            properties: { ...props, [key]: e.target.value },
-                          })
-                        }
-                        className="w-12 text-xs h-8"
-                      />
-                      <span className="text-xs text-gray-500 w-5">px</span>
-                      <div className="flex flex-col gap-0">
-                        <button
-                          onClick={() => {
-                            const current = Number(props[key as keyof typeof props] || "0");
-                            onBlockUpdate({
-                              ...block,
-                              properties: { ...props, [key]: String(current + 1) },
-                            });
-                          }}
-                          className="text-xs text-gray-600 hover:text-gray-900 leading-none"
-                        >
-                          ▲
-                        </button>
-                        <button
-                          onClick={() => {
-                            const current = Number(props[key as keyof typeof props] || "0");
-                            onBlockUpdate({
-                              ...block,
-                              properties: { ...props, [key]: String(Math.max(0, current - 1)) },
-                            });
-                          }}
-                          className="text-xs text-gray-600 hover:text-gray-900 leading-none"
-                        >
-                          ▼
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                <div className="space-y-2">
+                  {/* Top */}
+                  <SpacingInput
+                    key="marginTop"
+                    label="⬆"
+                    fullLabel="Margin Top"
+                    value={
+                      typeof props["marginTop"] === "string"
+                        ? (props["marginTop"] as string).replace(/[%px]/g, "")
+                        : props["marginTop"] || "0"
+                    }
+                    unit={
+                      typeof props["marginTop"] === "string" &&
+                      (props["marginTop"] as string).includes("%")
+                        ? "%"
+                        : "px"
+                    }
+                    onValueChange={(value) => {
+                      const unit =
+                        typeof props["marginTop"] === "string" &&
+                        (props["marginTop"] as string).includes("%")
+                          ? "%"
+                          : "px";
+                      onBlockUpdate({
+                        ...block,
+                        properties: { ...props, marginTop: `${value}${unit}` },
+                      });
+                    }}
+                    onUnitChange={(newUnit) => {
+                      const value =
+                        typeof props["marginTop"] === "string"
+                          ? (props["marginTop"] as string).replace(/[%px]/g, "")
+                          : props["marginTop"] || "0";
+                      onBlockUpdate({
+                        ...block,
+                        properties: { ...props, marginTop: `${value}${newUnit}` },
+                      });
+                    }}
+                  />
+
+                  {/* Left & Right */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <SpacingInput
+                      key="marginLeft"
+                      label="⬅"
+                      fullLabel="Margin Left"
+                      value={
+                        typeof props["marginLeft"] === "string"
+                          ? (props["marginLeft"] as string).replace(/[%px]/g, "")
+                          : props["marginLeft"] || "0"
+                      }
+                      unit={
+                        typeof props["marginLeft"] === "string" &&
+                        (props["marginLeft"] as string).includes("%")
+                          ? "%"
+                          : "px"
+                      }
+                      onValueChange={(value) => {
+                        const unit =
+                          typeof props["marginLeft"] === "string" &&
+                          (props["marginLeft"] as string).includes("%")
+                            ? "%"
+                            : "px";
+                        onBlockUpdate({
+                          ...block,
+                          properties: { ...props, marginLeft: `${value}${unit}` },
+                        });
+                      }}
+                      onUnitChange={(newUnit) => {
+                        const value =
+                          typeof props["marginLeft"] === "string"
+                            ? (props["marginLeft"] as string).replace(/[%px]/g, "")
+                            : props["marginLeft"] || "0";
+                        onBlockUpdate({
+                          ...block,
+                          properties: { ...props, marginLeft: `${value}${newUnit}` },
+                        });
+                      }}
+                    />
+                    <SpacingInput
+                      key="marginRight"
+                      label="➡"
+                      fullLabel="Margin Right"
+                      value={
+                        typeof props["marginRight"] === "string"
+                          ? (props["marginRight"] as string).replace(/[%px]/g, "")
+                          : props["marginRight"] || "0"
+                      }
+                      unit={
+                        typeof props["marginRight"] === "string" &&
+                        (props["marginRight"] as string).includes("%")
+                          ? "%"
+                          : "px"
+                      }
+                      onValueChange={(value) => {
+                        const unit =
+                          typeof props["marginRight"] === "string" &&
+                          (props["marginRight"] as string).includes("%")
+                            ? "%"
+                            : "px";
+                        onBlockUpdate({
+                          ...block,
+                          properties: { ...props, marginRight: `${value}${unit}` },
+                        });
+                      }}
+                      onUnitChange={(newUnit) => {
+                        const value =
+                          typeof props["marginRight"] === "string"
+                            ? (props["marginRight"] as string).replace(/[%px]/g, "")
+                            : props["marginRight"] || "0";
+                        onBlockUpdate({
+                          ...block,
+                          properties: { ...props, marginRight: `${value}${newUnit}` },
+                        });
+                      }}
+                    />
+                  </div>
+
+                  {/* Bottom */}
+                  <SpacingInput
+                    key="marginBottom"
+                    label="⬇"
+                    fullLabel="Margin Bottom"
+                    value={
+                      typeof props["marginBottom"] === "string"
+                        ? (props["marginBottom"] as string).replace(/[%px]/g, "")
+                        : props["marginBottom"] || "0"
+                    }
+                    unit={
+                      typeof props["marginBottom"] === "string" &&
+                      (props["marginBottom"] as string).includes("%")
+                        ? "%"
+                        : "px"
+                    }
+                    onValueChange={(value) => {
+                      const unit =
+                        typeof props["marginBottom"] === "string" &&
+                        (props["marginBottom"] as string).includes("%")
+                          ? "%"
+                          : "px";
+                      onBlockUpdate({
+                        ...block,
+                        properties: { ...props, marginBottom: `${value}${unit}` },
+                      });
+                    }}
+                    onUnitChange={(newUnit) => {
+                      const value =
+                        typeof props["marginBottom"] === "string"
+                          ? (props["marginBottom"] as string).replace(/[%px]/g, "")
+                          : props["marginBottom"] || "0";
+                      onBlockUpdate({
+                        ...block,
+                        properties: { ...props, marginBottom: `${value}${newUnit}` },
+                      });
+                    }}
+                  />
                 </div>
               )}
             </div>

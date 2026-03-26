@@ -472,6 +472,18 @@ export const createNewLandingPage = (
   ],
 });
 
+// Helper function to format spacing values with units
+const formatSpacingValue = (value: any): string => {
+  if (!value) return "0";
+  const stringValue = String(value);
+  // If value already includes a unit (px or %), use it as-is
+  if (stringValue.includes("px") || stringValue.includes("%")) {
+    return stringValue;
+  }
+  // Otherwise, assume it's in pixels
+  return `${stringValue}px`;
+};
+
 // Utility function to convert block properties to inline styles
 export const getBlockStyles = (props: Record<string, any>): React.CSSProperties => {
   const styles: React.CSSProperties = {};
@@ -483,31 +495,31 @@ export const getBlockStyles = (props: Record<string, any>): React.CSSProperties 
   if (props.width) styles.width = props.width;
   if (props.padding) styles.padding = props.padding;
   if (props.margin) styles.margin = props.margin;
-  if (props.paddingTop) styles.paddingTop = `${props.paddingTop}px`;
-  if (props.paddingBottom) styles.paddingBottom = `${props.paddingBottom}px`;
-  if (props.paddingLeft) styles.paddingLeft = `${props.paddingLeft}px`;
-  if (props.paddingRight) styles.paddingRight = `${props.paddingRight}px`;
-  if (props.marginTop) styles.marginTop = `${props.marginTop}px`;
-  if (props.marginBottom) styles.marginBottom = `${props.marginBottom}px`;
-  if (props.marginLeft) styles.marginLeft = `${props.marginLeft}px`;
-  if (props.marginRight) styles.marginRight = `${props.marginRight}px`;
+  if (props.paddingTop) styles.paddingTop = formatSpacingValue(props.paddingTop);
+  if (props.paddingBottom) styles.paddingBottom = formatSpacingValue(props.paddingBottom);
+  if (props.paddingLeft) styles.paddingLeft = formatSpacingValue(props.paddingLeft);
+  if (props.paddingRight) styles.paddingRight = formatSpacingValue(props.paddingRight);
+  if (props.marginTop) styles.marginTop = formatSpacingValue(props.marginTop);
+  if (props.marginBottom) styles.marginBottom = formatSpacingValue(props.marginBottom);
+  if (props.marginLeft) styles.marginLeft = formatSpacingValue(props.marginLeft);
+  if (props.marginRight) styles.marginRight = formatSpacingValue(props.marginRight);
 
-  if (props.borderRadius) styles.borderRadius = `${props.borderRadius}px`;
+  if (props.borderRadius) styles.borderRadius = formatSpacingValue(props.borderRadius);
   if (props.borderWidth || props.borderStyle) {
-    styles.borderWidth = `${props.borderWidth || 1}px`;
+    styles.borderWidth = formatSpacingValue(props.borderWidth || 1);
     styles.borderStyle = props.borderStyle || "solid";
     styles.borderColor = props.borderColor || "#e5e7eb";
   }
 
-  if (props.fontSize) styles.fontSize = `${props.fontSize}px`;
+  if (props.fontSize) styles.fontSize = formatSpacingValue(props.fontSize);
   if (props.fontWeight) styles.fontWeight = props.fontWeight;
   if (props.lineHeight) styles.lineHeight = props.lineHeight;
-  if (props.letterSpacing) styles.letterSpacing = `${props.letterSpacing}px`;
+  if (props.letterSpacing) styles.letterSpacing = formatSpacingValue(props.letterSpacing);
   if (props.textAlign) styles.textAlign = props.textAlign as any;
   if (props.textTransform) styles.textTransform = props.textTransform as any;
 
   if (props.opacity) styles.opacity = parseInt(props.opacity) / 100;
-  if (props.gap) styles.gap = `${props.gap}px`;
+  if (props.gap) styles.gap = formatSpacingValue(props.gap);
 
   // Shadow mapping
   if (props.shadow && props.shadow !== "none") {
