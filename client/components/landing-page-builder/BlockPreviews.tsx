@@ -55,10 +55,10 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
       }`}
       style={{
         backgroundColor: props.backgroundColor,
-        minHeight: props.minHeight || "500px",
+        minHeight: props.minHeight || "300px",
       }}
     >
-      <div className="flex flex-col items-center justify-center h-full px-8 py-16 text-center">
+      <div className="flex flex-col items-center justify-center h-full px-8 py-8 text-center">
         <h1 className="text-5xl font-bold text-gray-900 mb-4">
           {props.headline}
         </h1>
@@ -103,11 +103,11 @@ export const FeaturesBlockPreview: React.FC<BlockPreviewProps> = ({
       }`}
       style={{ backgroundColor: props.backgroundColor }}
     >
-      <div className="px-8 py-16">
+      <div className="px-8 py-8">
         <h2 className="text-3xl font-bold text-center text-gray-900 mb-2">
           {props.heading}
         </h2>
-        <p className="text-center text-gray-600 mb-12">{props.description}</p>
+        <p className="text-center text-gray-600 mb-8">{props.description}</p>
         <div
           className="gap-8"
           style={{
@@ -144,8 +144,8 @@ export const TestimonialsBlockPreview: React.FC<BlockPreviewProps> = ({
       }`}
       style={{ backgroundColor: props.backgroundColor }}
     >
-      <div className="px-8 py-16">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+      <div className="px-8 py-8">
+        <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
           {props.heading}
         </h2>
         <div className="grid grid-cols-3 gap-8">
@@ -183,8 +183,8 @@ export const AboutBlockPreview: React.FC<BlockPreviewProps> = ({
       }`}
       style={{ backgroundColor: props.backgroundColor }}
     >
-      <div className="px-8 py-16">
-        <div className="grid grid-cols-2 gap-12 items-center">
+      <div className="px-8 py-8">
+        <div className="grid grid-cols-2 gap-8 items-center">
           {props.imagePosition === "left" && (
             <div className="h-64 bg-gray-300 rounded-lg flex items-center justify-center">
               <span className="text-gray-500">Image</span>
@@ -226,11 +226,11 @@ export const ContactFormBlockPreview: React.FC<BlockPreviewProps> = ({
       }`}
       style={{ backgroundColor: props.backgroundColor }}
     >
-      <div className="px-8 py-16 max-w-2xl mx-auto">
+      <div className="px-8 py-8 max-w-2xl mx-auto">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
           {props.heading}
         </h2>
-        <p className="text-gray-600 mb-8">{props.description}</p>
+        <p className="text-gray-600 mb-6">{props.description}</p>
         <form className="space-y-4">
           {props.fields?.map((field: any) => (
             <div key={field.id}>
@@ -355,11 +355,11 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
       }`}
       style={{ backgroundColor: props.backgroundColor }}
     >
-      <div className="px-8 py-16">
+      <div className="px-8 py-8">
         <h2 className="text-3xl font-bold text-center text-gray-900 mb-2">
           {props.heading}
         </h2>
-        <p className="text-center text-gray-600 mb-12">{props.subheading}</p>
+        <p className="text-center text-gray-600 mb-8">{props.subheading}</p>
         <div className="grid grid-cols-3 gap-8">
           {props.pricingTiers?.map((tier: any) => (
             <div
@@ -417,8 +417,8 @@ export const FaqBlockPreview: React.FC<BlockPreviewProps> = ({
       }`}
       style={{ backgroundColor: props.backgroundColor }}
     >
-      <div className="px-8 py-16 max-w-3xl mx-auto">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+      <div className="px-8 py-8 max-w-3xl mx-auto">
+        <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
           {props.heading}
         </h2>
         <div className="space-y-4">
@@ -456,11 +456,11 @@ export const SignupBlockPreview: React.FC<BlockPreviewProps> = ({
       }`}
       style={{ backgroundColor: props.backgroundColor }}
     >
-      <div className="px-8 py-16 max-w-2xl mx-auto text-center">
+      <div className="px-8 py-8 max-w-2xl mx-auto text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
           {props.heading}
         </h2>
-        <p className="text-gray-600 mb-8">{props.subheading}</p>
+        <p className="text-gray-600 mb-6">{props.subheading}</p>
         <div className="flex gap-3">
           <input
             type="email"

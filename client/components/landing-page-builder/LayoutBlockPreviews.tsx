@@ -26,9 +26,9 @@ export const SectionBlockPreview: React.FC<BlockPreviewProps> = ({
         minHeight: props.minHeight,
       }}
     >
-      <div className="min-h-full">
+      <div>
         {block.children && block.children.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {block.children.map((child) => (
               <div key={child.id} className="text-gray-500 text-sm p-4 bg-gray-50 rounded">
                 {child.type} block
@@ -60,7 +60,7 @@ export const RowBlockPreview: React.FC<BlockPreviewProps> = ({
       style={{
         display: props.display || "grid",
         gridTemplateColumns: props.gridTemplateColumns || "repeat(12, 1fr)",
-        gap: props.gap || "16px",
+        gap: props.gap || "12px",
       }}
     >
       {block.children && block.children.length > 0 ? (
@@ -102,8 +102,8 @@ export const ColumnBlockPreview: React.FC<BlockPreviewProps> = ({
           : "border border-dashed border-gray-300 bg-gray-50"
       }`}
       style={{
-        minHeight: props.minHeight || "100px",
-        padding: props.padding || "16px",
+        minHeight: props.minHeight || "60px",
+        padding: props.padding || "12px",
       }}
     >
       <div className="text-center text-gray-500 text-sm">
