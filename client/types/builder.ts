@@ -30,7 +30,15 @@ export interface BuilderComponent {
   textColor?: string;
   fontSize?: number;
   padding?: number;
+  paddingTop?: number;
+  paddingRight?: number;
+  paddingBottom?: number;
+  paddingLeft?: number;
   margin?: number;
+  marginTop?: number;
+  marginRight?: number;
+  marginBottom?: number;
+  marginLeft?: number;
   borderColor?: string;
   borderWidth?: number;
   borderRadius?: number;
