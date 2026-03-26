@@ -24,6 +24,12 @@ interface StyleState {
   borderWidth: string;
 }
 
+interface SizingUnits {
+  width: "%" | "px";
+  height: "%" | "px";
+  fontSize: "%" | "px";
+}
+
 export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
   component,
   onUpdate,
@@ -40,6 +46,12 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     borderRadius: "0",
     borderColor: "#000000",
     borderWidth: "0",
+  });
+
+  const [sizingUnits, setSizingUnits] = React.useState<SizingUnits>({
+    width: "%",
+    height: "px",
+    fontSize: "px",
   });
 
   const [expandedSections, setExpandedSections] = React.useState({
@@ -118,6 +130,22 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
       }
     };
   }, []);
+
+  const handleUnitChange = React.useCallback(
+    (property: keyof SizingUnits, newUnit: "%" | "px") => {
+      setSizingUnits((prev) => ({
+        ...prev,
+        [property]: newUnit,
+      }));
+
+      // Update the component with the unit in the value
+      const value = styles[property];
+      const updates: any = {};
+      updates[property] = value; // Value is just the number, unit is applied in CSS
+      onUpdate(updates);
+    },
+    [styles, onUpdate]
+  );
 
   const toggleSection = React.useCallback(
     (section: keyof typeof expandedSections) => {
@@ -218,6 +246,48 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     []
   );
 
+  const SizingInput = React.useMemo(
+    () =>
+      ({
+        label,
+        value,
+        onChange,
+        unit,
+        onUnitChange,
+        placeholder = "",
+      }: {
+        label: string;
+        value: string;
+        onChange: (value: string) => void;
+        unit: "%" | "px";
+        onUnitChange: (unit: "%" | "px") => void;
+        placeholder?: string;
+      }) =>
+        (
+          <div className="space-y-2 px-4 py-3 border-b border-gray-100">
+            <label className="text-xs font-bold text-gray-700">{label}</label>
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+                className="h-9 text-sm flex-1"
+              />
+              <select
+                value={unit}
+                onChange={(e) => onUnitChange(e.target.value as "%" | "px")}
+                className="px-3 py-2 h-9 border border-gray-200 rounded-lg text-xs font-medium bg-white cursor-pointer hover:border-gray-300 transition-colors"
+              >
+                <option value="%">%</option>
+                <option value="px">px</option>
+              </select>
+            </div>
+          </div>
+        ),
+    []
+  );
+
   if (!component) {
     return (
       <aside className="w-80 flex-shrink-0 h-full border-l border-gray-200 bg-white flex flex-col min-h-0">
@@ -294,25 +364,28 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
           <SectionHeader title="Sizing" section="sizing" />
           {expandedSections.sizing && (
             <>
-              <StyleInput
-                label="Width (%)"
+              <SizingInput
+                label="Width"
                 value={styles.width}
                 onChange={(value) => handleStyleChange("width", value)}
-                type="number"
+                unit={sizingUnits.width}
+                onUnitChange={(unit) => handleUnitChange("width", unit)}
                 placeholder="100"
               />
-              <StyleInput
-                label="Height (px)"
+              <SizingInput
+                label="Height"
                 value={styles.height}
                 onChange={(value) => handleStyleChange("height", value)}
-                type="number"
+                unit={sizingUnits.height}
+                onUnitChange={(unit) => handleUnitChange("height", unit)}
                 placeholder="auto"
               />
-              <StyleInput
-                label="Font Size (px)"
+              <SizingInput
+                label="Font Size"
                 value={styles.fontSize}
                 onChange={(value) => handleStyleChange("fontSize", value)}
-                type="number"
+                unit={sizingUnits.fontSize}
+                onUnitChange={(unit) => handleUnitChange("fontSize", unit)}
                 placeholder="16"
               />
             </>
