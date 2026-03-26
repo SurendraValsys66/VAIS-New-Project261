@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ChevronDown, Palette, Type, Box, Sparkles, ToggleLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -97,6 +104,8 @@ export const StylePanel: React.FC<StylePanelProps> = ({ onClose }) => {
 
   const [linkPaddingValues, setLinkPaddingValues] = useState(false);
   const [linkMarginValues, setLinkMarginValues] = useState(false);
+  const [paddingUnit, setPaddingUnit] = useState<"px" | "%">("px");
+  const [marginUnit, setMarginUnit] = useState<"px" | "%">("px");
 
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections((prev) => ({
@@ -282,7 +291,15 @@ export const StylePanel: React.FC<StylePanelProps> = ({ onClose }) => {
                       }}
                       className="w-12 text-xs h-7"
                     />
-                    <span className="text-xs text-gray-400">px</span>
+                    <Select value={paddingUnit} onValueChange={(val) => setPaddingUnit(val as "px" | "%")}>
+                      <SelectTrigger className="w-16 h-7 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="px">px</SelectItem>
+                        <SelectItem value="%">%</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <div className="flex flex-col gap-0 ml-auto">
                       <button
                         onClick={() => {
@@ -326,7 +343,15 @@ export const StylePanel: React.FC<StylePanelProps> = ({ onClose }) => {
                           onChange={(e) => updateStyle(key as keyof StyleState, e.target.value)}
                           className="w-10 text-xs h-7"
                         />
-                        <span className="text-xs text-gray-400">px</span>
+                        <Select value={paddingUnit} onValueChange={(val) => setPaddingUnit(val as "px" | "%")}>
+                          <SelectTrigger className="w-14 h-7 text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="px">px</SelectItem>
+                            <SelectItem value="%">%</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <div className="flex flex-col gap-0">
                           <button
                             onClick={() => updateStyle(key as keyof StyleState, String(Number(styles[key as keyof StyleState]) + 1))}
@@ -376,7 +401,15 @@ export const StylePanel: React.FC<StylePanelProps> = ({ onClose }) => {
                       }}
                       className="w-12 text-xs h-7"
                     />
-                    <span className="text-xs text-gray-400">px</span>
+                    <Select value={marginUnit} onValueChange={(val) => setMarginUnit(val as "px" | "%")}>
+                      <SelectTrigger className="w-16 h-7 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="px">px</SelectItem>
+                        <SelectItem value="%">%</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <div className="flex flex-col gap-0 ml-auto">
                       <button
                         onClick={() => {
@@ -420,7 +453,15 @@ export const StylePanel: React.FC<StylePanelProps> = ({ onClose }) => {
                           onChange={(e) => updateStyle(key as keyof StyleState, e.target.value)}
                           className="w-10 text-xs h-7"
                         />
-                        <span className="text-xs text-gray-400">px</span>
+                        <Select value={marginUnit} onValueChange={(val) => setMarginUnit(val as "px" | "%")}>
+                          <SelectTrigger className="w-14 h-7 text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="px">px</SelectItem>
+                            <SelectItem value="%">%</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <div className="flex flex-col gap-0">
                           <button
                             onClick={() => updateStyle(key as keyof StyleState, String(Number(styles[key as keyof StyleState]) + 1))}
