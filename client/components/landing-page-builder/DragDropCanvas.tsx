@@ -90,7 +90,7 @@ export const DragDropCanvas: React.FC<DragDropCanvasProps> = ({
   }
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div
         ref={dropRef}
         className={`w-full space-y-4 transition-all ${

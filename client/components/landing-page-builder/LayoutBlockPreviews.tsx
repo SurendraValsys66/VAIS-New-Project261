@@ -93,25 +93,42 @@ export const ColumnBlockPreview: React.FC<BlockPreviewProps> = ({
   onSelect,
 }) => {
   const props = block.properties;
+  const hasContent = block.children && block.children.length > 0;
+
   return (
     <div
       onClick={onSelect}
-      className={`cursor-pointer transition-all rounded-lg flex items-center justify-center ${
+      className={`cursor-pointer transition-all rounded-lg ${
         isSelected
           ? "border-2 border-valasys-orange bg-orange-50"
           : "border border-dashed border-gray-300 bg-gray-50"
       }`}
       style={{
-        minHeight: props.minHeight || "60px",
+        // Only use minHeight if there's content or if explicitly set to something meaningful
+        minHeight: hasContent
+          ? (props.minHeight || "auto")
+          : (props.minHeight && props.minHeight !== "60px" ? props.minHeight : "60px"),
         padding: props.padding || "12px",
       }}
     >
-      <div className="text-center text-gray-500 text-sm">
-        <p className="font-medium">Column</p>
-        <p className="text-xs mt-1">
-          Grid: {props.gridColumnStart || 1} - {props.gridColumnEnd || 7}
-        </p>
-      </div>
+      {hasContent ? (
+        <div className="space-y-3 w-full">
+          {block.children.map((child) => (
+            <div key={child.id} className="text-gray-500 text-sm p-4 bg-white rounded border border-gray-200">
+              {child.type} block
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex items-center justify-center text-gray-500 text-sm py-8">
+          <div className="text-center">
+            <p className="font-medium">Column</p>
+            <p className="text-xs mt-1">
+              Grid: {props.gridColumnStart || 1} - {props.gridColumnEnd || 7}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
