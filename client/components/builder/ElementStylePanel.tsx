@@ -113,10 +113,29 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
 
   const [groupPaddingValues, setGroupPaddingValues] = React.useState(false);
   const [groupMarginValues, setGroupMarginValues] = React.useState(false);
+  const [showImageDialog, setShowImageDialog] = React.useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   // Use ref to track pending updates to debounce
   const debounceTimerRef = React.useRef<NodeJS.Timeout>();
   const pendingUpdatesRef = React.useRef<Partial<BuilderComponent>>({});
+
+  // Handle image file upload
+  const handleImageUpload = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const dataUrl = event.target?.result as string;
+          handleStyleChange("backgroundImageUrl", dataUrl);
+          setShowImageDialog(false);
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+    []
+  );
 
   React.useEffect(() => {
     if (component) {
@@ -545,9 +564,90 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
 
               {/* Image */}
               <div className="border-t pt-4">
-                <button className="w-full px-3 py-2 text-xs font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                <button
+                  onClick={() => setShowImageDialog(true)}
+                  className="w-full px-3 py-2 text-xs font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                >
                   Add Image
                 </button>
+
+                {/* Image Dialog */}
+                {showImageDialog && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                      <div className="p-6 border-b border-gray-200">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-semibold text-gray-900">Add Image</h3>
+                          <button
+                            onClick={() => setShowImageDialog(false)}
+                            className="text-gray-400 hover:text-gray-600"
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="p-6 space-y-4">
+                        {/* Upload Tab */}
+                        <div className="space-y-4">
+                          <label className="block">
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors"
+                              onClick={() => fileInputRef.current?.click()}
+                            >
+                              <svg className="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <p className="text-sm font-medium text-gray-700">Click to upload or drag image</p>
+                              <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
+                            </div>
+                          </label>
+
+                          <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                              <div className="w-full border-t border-gray-300"></div>
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                              <span className="px-2 bg-white text-gray-500">Or paste URL</span>
+                            </div>
+                          </div>
+
+                          <Input
+                            type="text"
+                            placeholder="https://example.com/image.jpg"
+                            className="text-xs"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && e.currentTarget.value) {
+                                handleStyleChange("backgroundImageUrl", e.currentTarget.value);
+                                setShowImageDialog(false);
+                              }
+                            }}
+                            onBlur={(e) => {
+                              if (e.currentTarget.value) {
+                                handleStyleChange("backgroundImageUrl", e.currentTarget.value);
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="p-6 border-t border-gray-200 flex gap-2 justify-end">
+                        <button
+                          onClick={() => setShowImageDialog(false)}
+                          className="px-4 py-2 text-xs font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Image URL */}
