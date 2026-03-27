@@ -434,13 +434,13 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
       );
     case "button": {
       const buttonRef = React.useRef<HTMLButtonElement>(null);
-      const isEditingRef = React.useRef(false);
+      const [isEditing, setIsEditing] = React.useState(false);
 
       React.useEffect(() => {
-        if (buttonRef.current && !isEditingRef.current) {
+        if (buttonRef.current) {
           buttonRef.current.textContent = component.contentText || "Get Started";
         }
-      }, [component.contentText]);
+      }, [component.contentText, isEditing]);
 
       return wrapWithControls(
         <div className="p-4 h-full flex items-center justify-start">
@@ -449,11 +449,13 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
             contentEditable
             suppressContentEditableWarning
             onFocus={(e) => {
-              isEditingRef.current = true;
-              // Clear text on focus to start fresh
-              if (e.currentTarget.textContent === "Get Started" && !component.contentText) {
-                e.currentTarget.textContent = "";
-              }
+              setIsEditing(true);
+              // Select all text when focusing for easier editing
+              const selection = window.getSelection();
+              const range = document.createRange();
+              range.selectNodeContents(e.currentTarget);
+              selection?.removeAllRanges();
+              selection?.addRange(range);
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -466,11 +468,11 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
               onUpdate(component.id, { contentText: text });
             }}
             onBlur={(e) => {
-              isEditingRef.current = false;
+              setIsEditing(false);
               const text = e.currentTarget.textContent || "";
               if (!text) {
-                e.currentTarget.textContent = "Get Started";
                 onUpdate(component.id, { contentText: "" });
+                e.currentTarget.textContent = "Get Started";
               }
             }}
             className="px-8 py-6 text-lg font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-0"
@@ -489,9 +491,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
               boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1) !important",
               cursor: "pointer",
             }}
-          >
-            {component.contentText || "Get Started"}
-          </button>
+          />
         </div>,
       );
     }
