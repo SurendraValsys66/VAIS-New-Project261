@@ -235,6 +235,11 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
       <div
         ref={drag}
         onClick={(e) => {
+          // Allow contentEditable elements (like buttons) to handle their own clicks
+          const target = e.target as HTMLElement;
+          if (target.contentEditable === "true" || target.closest("[contenteditable='true']")) {
+            return;
+          }
           e.stopPropagation();
           onSelect?.(component.id);
         }}
