@@ -345,12 +345,18 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
       return wrapWithControls(
         <div className="p-4 h-full flex items-center" style={getComponentStyles()}>
           <h2
-            className="text-3xl font-bold w-full leading-tight focus:outline-none focus:ring-0"
+            className="w-full focus:outline-none focus:ring-0"
             contentEditable
             suppressContentEditableWarning
             style={{
               color: component.textColor || "#111827",
               fontSize: component.fontSize ? `${component.fontSize}${component.fontSizeUnit || "px"}` : undefined,
+              fontWeight: component.fontWeight || "700",
+              lineHeight: component.lineHeight || "1.5",
+              letterSpacing: component.letterSpacing ? `${component.letterSpacing}px` : "0",
+              fontFamily: component.fontFamily === "serif" ? "Georgia, serif" :
+                         component.fontFamily === "mono" ? "Courier New, monospace" :
+                         "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
               outline: "none !important",
               border: "none !important",
               boxShadow: "none !important",
@@ -364,12 +370,21 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
       return wrapWithControls(
         <div className="p-4 h-full" style={getComponentStyles()}>
           <p
-            className="text-base leading-relaxed"
+            className="focus:outline-none focus:ring-0"
             contentEditable
             suppressContentEditableWarning
             style={{
               color: component.textColor || "#4b5563",
               fontSize: component.fontSize ? `${component.fontSize}${component.fontSizeUnit || "px"}` : undefined,
+              fontWeight: component.fontWeight || "400",
+              lineHeight: component.lineHeight || "1.5",
+              letterSpacing: component.letterSpacing ? `${component.letterSpacing}px` : "0",
+              fontFamily: component.fontFamily === "serif" ? "Georgia, serif" :
+                         component.fontFamily === "mono" ? "Courier New, monospace" :
+                         "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
+              outline: "none !important",
+              border: "none !important",
+              boxShadow: "none !important",
             }}
           >
             Add your description text here. Make it compelling and easy to read for your visitors.

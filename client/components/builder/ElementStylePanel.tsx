@@ -15,6 +15,10 @@ interface StyleState {
   backgroundColor: string;
   textColor: string;
   fontSize: string;
+  fontWeight: string;
+  lineHeight: string;
+  letterSpacing: string;
+  fontFamily: string;
   paddingTop: string;
   paddingRight: string;
   paddingBottom: string;
@@ -65,6 +69,10 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     backgroundColor: "#ffffff",
     textColor: "#000000",
     fontSize: "16",
+    fontWeight: "400",
+    lineHeight: "1.5",
+    letterSpacing: "0",
+    fontFamily: "system",
     paddingTop: "0",
     paddingRight: "0",
     paddingBottom: "0",
@@ -110,6 +118,7 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     alignment: true,
     background: true,
     colors: true,
+    typography: true,
     sizing: true,
     spacing: true,
     borders: true,
@@ -150,6 +159,10 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
         backgroundColor: component.backgroundColor || props.backgroundColor || "#ffffff",
         textColor: component.textColor || props.textColor || "#000000",
         fontSize: component.fontSize ? String(component.fontSize) : (props.fontSize ? String(props.fontSize) : "16"),
+        fontWeight: component.fontWeight || props.fontWeight || "400",
+        lineHeight: component.lineHeight || props.lineHeight || "1.5",
+        letterSpacing: component.letterSpacing ? String(component.letterSpacing) : (props.letterSpacing ? String(props.letterSpacing) : "0"),
+        fontFamily: component.fontFamily || props.fontFamily || "system",
         paddingTop: component.paddingTop ? String(component.paddingTop) : (props.paddingTop ? String(props.paddingTop) : "0"),
         paddingRight: component.paddingRight ? String(component.paddingRight) : (props.paddingRight ? String(props.paddingRight) : "0"),
         paddingBottom: component.paddingBottom ? String(component.paddingBottom) : (props.paddingBottom ? String(props.paddingBottom) : "0"),
@@ -800,6 +813,72 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
                 type="color"
               />
             </>
+          )}
+        </div>
+
+        {/* Typography Section */}
+        <div>
+          <SectionHeader title="Typography" section="typography" />
+          {expandedSections.typography && (
+            <div className="px-4 py-3 space-y-4 bg-gray-50">
+              {/* Font Family */}
+              <div>
+                <label className="text-xs font-semibold text-gray-700 block mb-2">Font Family</label>
+                <select
+                  value={styles.fontFamily}
+                  onChange={(e) => handleStyleChange("fontFamily", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs focus:ring-blue-500 focus:border-blue-500 bg-white"
+                >
+                  <option value="system">System (Sans-serif)</option>
+                  <option value="serif">Serif</option>
+                  <option value="mono">Monospace</option>
+                </select>
+              </div>
+
+              {/* Font Weight */}
+              <div>
+                <label className="text-xs font-semibold text-gray-700 block mb-2">Font Weight</label>
+                <select
+                  value={styles.fontWeight}
+                  onChange={(e) => handleStyleChange("fontWeight", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs focus:ring-blue-500 focus:border-blue-500 bg-white"
+                >
+                  <option value="300">Light (300)</option>
+                  <option value="400">Regular (400)</option>
+                  <option value="500">Medium (500)</option>
+                  <option value="600">Semibold (600)</option>
+                  <option value="700">Bold (700)</option>
+                  <option value="800">Extrabold (800)</option>
+                  <option value="900">Black (900)</option>
+                </select>
+              </div>
+
+              {/* Line Height */}
+              <div>
+                <label className="text-xs font-semibold text-gray-700 block mb-2">Line Height</label>
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={styles.lineHeight}
+                  onChange={(e) => handleStyleChange("lineHeight", e.target.value)}
+                  placeholder="1.5"
+                  className="h-9 text-sm"
+                />
+              </div>
+
+              {/* Letter Spacing */}
+              <div>
+                <label className="text-xs font-semibold text-gray-700 block mb-2">Letter Spacing (px)</label>
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={styles.letterSpacing}
+                  onChange={(e) => handleStyleChange("letterSpacing", e.target.value)}
+                  placeholder="0"
+                  className="h-9 text-sm"
+                />
+              </div>
+            </div>
           )}
         </div>
 
