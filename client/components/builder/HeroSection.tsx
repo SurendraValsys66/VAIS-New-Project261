@@ -262,7 +262,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   const text = e.currentTarget.textContent || "";
                   handleElementUpdate(element.id, text);
                 }}
-                onFocus={() => setEditingElementId(element.id)}
+                onFocus={(e) => {
+                  setEditingElementId(element.id);
+                  // Select all text when focusing for easy editing
+                  setTimeout(() => {
+                    const selection = window.getSelection();
+                    const range = document.createRange();
+                    range.selectNodeContents(e.currentTarget);
+                    selection?.removeAllRanges();
+                    selection?.addRange(range);
+                  }, 0);
+                }}
                 onBlur={() => setEditingElementId(null)}
                 onClick={(e) => {
                   if (isSelected) e.stopPropagation();
@@ -294,7 +304,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 const text = e.currentTarget.textContent || "";
                 handleElementUpdate(element.id, text);
               }}
-              onFocus={() => setEditingElementId(element.id)}
+              onFocus={(e) => {
+                setEditingElementId(element.id);
+                // Select all text when focusing for easy editing
+                setTimeout(() => {
+                  const selection = window.getSelection();
+                  const range = document.createRange();
+                  range.selectNodeContents(e.currentTarget);
+                  selection?.removeAllRanges();
+                  selection?.addRange(range);
+                }, 0);
+              }}
               onBlur={() => setEditingElementId(null)}
               onClick={(e) => {
                 if (isSelected) e.stopPropagation();
@@ -326,7 +346,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 const text = e.currentTarget.textContent || "";
                 handleElementUpdate(element.id, text);
               }}
-              onFocus={() => setEditingElementId(element.id)}
+              onFocus={(e) => {
+                setEditingElementId(element.id);
+                // Select all text when focusing for easy editing
+                setTimeout(() => {
+                  const selection = window.getSelection();
+                  const range = document.createRange();
+                  range.selectNodeContents(e.currentTarget);
+                  selection?.removeAllRanges();
+                  selection?.addRange(range);
+                }, 0);
+              }}
               onBlur={() => setEditingElementId(null)}
               onClick={(e) => {
                 if (isSelected) e.stopPropagation();
