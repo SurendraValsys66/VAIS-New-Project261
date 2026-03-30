@@ -48,6 +48,8 @@ interface StyleState {
   heroBadgeText: string;
   heroHeadingText: string;
   heroDescriptionText: string;
+  heroPrimaryButtonText: string;
+  heroSecondaryButtonText: string;
 }
 
 interface SpacingState {
@@ -108,6 +110,8 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     heroBadgeText: "",
     heroHeadingText: "",
     heroDescriptionText: "",
+    heroPrimaryButtonText: "",
+    heroSecondaryButtonText: "",
   });
 
   const [spacing, setSpacing] = React.useState<SpacingState>({
@@ -128,6 +132,7 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
 
   const [expandedSections, setExpandedSections] = React.useState({
     content: true,
+    buttons: true,
     alignment: true,
     background: true,
     colors: true,
@@ -233,6 +238,8 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
         heroBadgeText: component.heroBadgeText || "",
         heroHeadingText: component.heroHeadingText || "",
         heroDescriptionText: component.heroDescriptionText || "",
+        heroPrimaryButtonText: component.heroPrimaryButtonText || "",
+        heroSecondaryButtonText: component.heroSecondaryButtonText || "",
       });
 
       // Initialize units from component
@@ -247,6 +254,8 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     component?.heroBadgeText,
     component?.heroHeadingText,
     component?.heroDescriptionText,
+    component?.heroPrimaryButtonText,
+    component?.heroSecondaryButtonText,
   ]);
 
   const handleStyleChange = React.useCallback(
@@ -265,7 +274,9 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
         key === "borderColor" ||
         key === "heroBadgeText" ||
         key === "heroHeadingText" ||
-        key === "heroDescriptionText"
+        key === "heroDescriptionText" ||
+        key === "heroPrimaryButtonText" ||
+        key === "heroSecondaryButtonText"
       ) {
         updates[key] = value;
       } else if (key === "displayConditions" || key === "contentVisibility") {
@@ -278,7 +289,9 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
       if (
         key === "heroBadgeText" ||
         key === "heroHeadingText" ||
-        key === "heroDescriptionText"
+        key === "heroDescriptionText" ||
+        key === "heroPrimaryButtonText" ||
+        key === "heroSecondaryButtonText"
       ) {
         if (debounceTimerRef.current) {
           clearTimeout(debounceTimerRef.current);
@@ -692,6 +705,37 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
                     onChange={(e) => handleStyleChange("heroDescriptionText", e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-20"
                     placeholder="Enter description text..."
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {component.type === "hero" && (
+          <div>
+            <SectionHeader title="Buttons" section="buttons" />
+            {expandedSections.buttons && (
+              <div className="px-4 py-3 space-y-4 bg-gray-50 border-b border-gray-200">
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 block mb-2">Primary Button Text</label>
+                  <Input
+                    type="text"
+                    value={styles.heroPrimaryButtonText}
+                    onChange={(e) => handleStyleChange("heroPrimaryButtonText", e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Start Free Trial"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 block mb-2">Secondary Button Text</label>
+                  <Input
+                    type="text"
+                    value={styles.heroSecondaryButtonText}
+                    onChange={(e) => handleStyleChange("heroSecondaryButtonText", e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Watch Demo"
                   />
                 </div>
               </div>

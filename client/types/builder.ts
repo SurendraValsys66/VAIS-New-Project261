@@ -72,6 +72,8 @@ export interface BuilderComponent {
   heroBadgeText?: string;
   heroHeadingText?: string;
   heroDescriptionText?: string;
+  heroPrimaryButtonText?: string;
+  heroSecondaryButtonText?: string;
 }
 
 export const DRAG_TYPES = {
