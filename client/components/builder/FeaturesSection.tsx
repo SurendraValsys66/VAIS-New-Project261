@@ -39,6 +39,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
   const [localSelectedHeaderElement, setLocalSelectedHeaderElement] = React.useState<"heading" | "description" | null>(
     selectedHeaderElement as "heading" | "description" | null
   );
+  const [isClickingControl, setIsClickingControl] = React.useState(false);
 
   const features: Feature[] = (block.properties.features || []) as Feature[];
 
@@ -211,10 +212,16 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
       >
         <button
           type="button"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsClickingControl(true);
+          }}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             handleCopyHeaderElement(elementType);
+            setIsClickingControl(false);
           }}
           className="h-6 w-6 flex items-center justify-center hover:bg-valasys-orange/10 rounded transition-colors cursor-pointer"
           title="Copy text"
@@ -223,10 +230,16 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
         </button>
         <button
           type="button"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsClickingControl(true);
+          }}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             handleAddHeaderElement(elementType);
+            setIsClickingControl(false);
           }}
           className="h-6 w-6 flex items-center justify-center hover:bg-valasys-orange/10 rounded transition-colors cursor-pointer"
           title="Add/Duplicate"
@@ -235,10 +248,16 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
         </button>
         <button
           type="button"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsClickingControl(true);
+          }}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             handleDeleteHeaderElement(elementType);
+            setIsClickingControl(false);
           }}
           className="h-6 w-6 flex items-center justify-center hover:bg-red-100 text-red-500 rounded transition-colors cursor-pointer"
           title="Delete"
@@ -273,8 +292,10 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
               suppressContentEditableWarning
               onBlur={(e) => {
                 handleUpdateBlock({ heading: e.currentTarget.textContent });
-                setLocalSelectedHeaderElement(null);
-                onSelect?.(null);
+                if (!isClickingControl) {
+                  setLocalSelectedHeaderElement(null);
+                  onSelect?.(null);
+                }
               }}
               onFocus={(e) => {
                 setLocalSelectedHeaderElement("heading");
@@ -307,8 +328,10 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
               suppressContentEditableWarning
               onBlur={(e) => {
                 handleUpdateBlock({ description: e.currentTarget.textContent });
-                setLocalSelectedHeaderElement(null);
-                onSelect?.(null);
+                if (!isClickingControl) {
+                  setLocalSelectedHeaderElement(null);
+                  onSelect?.(null);
+                }
               }}
               onFocus={(e) => {
                 setLocalSelectedHeaderElement("description");
