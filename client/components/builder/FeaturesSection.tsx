@@ -52,7 +52,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
 
   // Initialize header elements from block properties (backward compatible)
   const initializeHeaderElements = (): HeaderElement[] => {
-    if (block.properties.headerElements) {
+    if (block.properties.headerElements && Array.isArray(block.properties.headerElements) && block.properties.headerElements.length > 0) {
       return block.properties.headerElements as HeaderElement[];
     }
     // Backward compatibility: convert old heading/description to new format
@@ -77,6 +77,11 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
   const [headerElements, setHeaderElements] = React.useState<HeaderElement[]>(
     initializeHeaderElements()
   );
+
+  // Sync headerElements with block.properties whenever block changes
+  React.useEffect(() => {
+    setHeaderElements(initializeHeaderElements());
+  }, [block.properties.headerElements]);
 
   const handleCopyFeature = (featureId: string) => {
     const featureToCopy = features.find(f => f.id === featureId);

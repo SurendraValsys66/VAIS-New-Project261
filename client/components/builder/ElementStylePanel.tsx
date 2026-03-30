@@ -272,6 +272,8 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
       let featureIcon = "";
       let featureTitle = "";
       let featureDescription = "";
+      let featureGridHeading = "";
+      let featureGridDescription = "";
 
       if (component.type === "feature-grid" && component.selectedFeatureId && Array.isArray(component.features)) {
         const selectedFeature = component.features.find((f: any) => f.id === component.selectedFeatureId);
@@ -279,6 +281,18 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
           featureIcon = selectedFeature.icon || "";
           featureTitle = selectedFeature.title || "";
           featureDescription = selectedFeature.description || "";
+        }
+      }
+
+      // Get selected header element data if this is a feature-grid with a selected header element
+      if (component.type === "feature-grid" && component.selectedHeaderElement && Array.isArray(component.headerElements)) {
+        const selectedHeaderElement = component.headerElements.find((e: any) => e.id === component.selectedHeaderElement);
+        if (selectedHeaderElement) {
+          if (selectedHeaderElement.type === "heading") {
+            featureGridHeading = selectedHeaderElement.text || "";
+          } else if (selectedHeaderElement.type === "description") {
+            featureGridDescription = selectedHeaderElement.text || "";
+          }
         }
       }
 
@@ -347,8 +361,8 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
         featureIcon,
         featureTitle,
         featureDescription,
-        featureGridHeading: component.featureGridHeading || "",
-        featureGridDescription: component.featureGridDescription || "",
+        featureGridHeading: featureGridHeading || component.featureGridHeading || "",
+        featureGridDescription: featureGridDescription || component.featureGridDescription || "",
         featureGridImageUrl: component.featureGridImageUrl || "",
         featureGridPrimaryButtonText: component.featureGridPrimaryButtonText || "",
         featureGridSecondaryButtonText: component.featureGridSecondaryButtonText || "",

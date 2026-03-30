@@ -479,14 +479,27 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId
                     updateComponent(selectedComponentId, updates);
                   }
                 } else if (selectedComponent?.type === "feature-grid" && selectedComponent?.selectedHeaderElement) {
-                  // Handle feature-grid heading/description updates
+                  // Handle feature-grid heading/description updates from styling panel
                   const { featureGridHeading, featureGridDescription, ...otherUpdates } = updates as any;
 
                   if (featureGridHeading !== undefined || featureGridDescription !== undefined) {
+                    // Update the headerElements array with the new text from styling panel
+                    const headerElements = selectedComponent.headerElements || [];
+                    const updatedHeaderElements = headerElements.map((element: any) => {
+                      if (element.id === selectedComponent.selectedHeaderElement) {
+                        if (featureGridHeading !== undefined && element.type === "heading") {
+                          return { ...element, text: featureGridHeading };
+                        }
+                        if (featureGridDescription !== undefined && element.type === "description") {
+                          return { ...element, text: featureGridDescription };
+                        }
+                      }
+                      return element;
+                    });
+
                     updateComponent(selectedComponentId, {
                       ...otherUpdates,
-                      ...(featureGridHeading !== undefined && { featureGridHeading }),
-                      ...(featureGridDescription !== undefined && { featureGridDescription }),
+                      headerElements: updatedHeaderElements,
                     });
                   } else {
                     updateComponent(selectedComponentId, updates);

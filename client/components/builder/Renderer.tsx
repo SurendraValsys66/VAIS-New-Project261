@@ -688,14 +688,14 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
                 { id: "f2", icon: "02", title: "Feature Item 2", description: "Explain how this feature solves a real problem for your users." },
                 { id: "f3", icon: "03", title: "Feature Item 3", description: "Explain how this feature solves a real problem for your users." },
               ],
+              headerElements: component.headerElements || [],
             },
           }}
           onUpdate={(block) => {
             const updates: any = {
-              featureGridHeading: block.properties.heading,
-              featureGridDescription: block.properties.description,
               featureGridColumns: block.properties.columns,
               features: block.properties.features,
+              headerElements: block.properties.headerElements,
             };
             onUpdate(component.id, updates);
           }}
@@ -709,7 +709,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
               updates.selectedHeaderElement = null;
             } else {
               updates.selectedFeatureId = null;
-              updates.selectedHeaderElement = elementInfo.type;
+              updates.selectedHeaderElement = elementInfo.id;
             }
             onUpdate(component.id, updates);
           }}
