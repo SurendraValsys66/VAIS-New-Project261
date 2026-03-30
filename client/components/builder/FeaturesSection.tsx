@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Trash2, Copy, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
 
 interface FeaturesSectionProps {
   block: LandingPageBlock;
@@ -167,33 +166,43 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
     const content = elementType === "heading"
       ? block.properties.heading
       : block.properties.description;
-    navigator.clipboard.writeText(content || "");
-    toast.success("Copied to clipboard");
-  };
-
-  const handleAddHeaderElement = (elementType: "heading" | "description") => {
-    // For header elements, Add creates a copy of the content
-    const content = elementType === "heading"
-      ? block.properties.heading
-      : block.properties.description;
 
     if (!content) {
-      toast.error("No content to duplicate");
       return;
     }
 
-    // Copy to clipboard as a way to add/duplicate
-    navigator.clipboard.writeText(content || "");
-    toast.success("Copied to clipboard - paste anywhere to use");
+    // Create a new feature item with the header content
+    const newFeatureId = `feature-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const newFeature: Feature = {
+      id: newFeatureId,
+      icon: "✨",
+      title: elementType === "heading" ? content : "",
+      description: elementType === "description" ? content : "",
+    };
+
+    const updatedFeatures = [...features, newFeature];
+    onUpdate({
+      ...block,
+      properties: {
+        ...block.properties,
+        features: updatedFeatures,
+      },
+    });
+
+    setSelectedFeatureId(newFeatureId);
+    onSelect?.(newFeatureId);
+  };
+
+  const handleAddHeaderElement = (elementType: "heading" | "description") => {
+    // Add is the same as copy - creates a new feature item
+    handleCopyHeaderElement(elementType);
   };
 
   const handleDeleteHeaderElement = (elementType: "heading" | "description") => {
     if (elementType === "heading") {
       handleUpdateBlock({ heading: "" });
-      toast.success("Heading cleared");
     } else {
       handleUpdateBlock({ description: "" });
-      toast.success("Description cleared");
     }
     setLocalSelectedHeaderElement(null);
     onSelect?.(null);
