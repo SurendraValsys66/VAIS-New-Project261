@@ -161,6 +161,33 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
     );
   };
 
+  const handleCopyHeaderElement = (elementType: "heading" | "description") => {
+    const content = elementType === "heading"
+      ? block.properties.heading
+      : block.properties.description;
+    navigator.clipboard.writeText(content || "");
+  };
+
+  const handleAddHeaderElement = (elementType: "heading" | "description") => {
+    // For heading/description, "add" means duplicate it
+    // Store it in clipboard and user can paste if needed
+    const content = elementType === "heading"
+      ? block.properties.heading
+      : block.properties.description;
+    navigator.clipboard.writeText(content || "");
+    // Or you could create a copy in the block - for now we'll just copy to clipboard
+  };
+
+  const handleDeleteHeaderElement = (elementType: "heading" | "description") => {
+    if (elementType === "heading") {
+      handleUpdateBlock({ heading: "" });
+    } else {
+      handleUpdateBlock({ description: "" });
+    }
+    setLocalSelectedHeaderElement(null);
+    onSelect?.(null);
+  };
+
   const renderHeaderControls = (elementType: "heading" | "description") => {
     if (localSelectedHeaderElement !== elementType) {
       return null;
@@ -177,17 +204,36 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            // Copy is same as the content itself for header elements
-            const content = elementType === "heading"
-              ? block.properties.heading
-              : block.properties.description;
-            // Just copy to clipboard as a simple copy action
-            navigator.clipboard.writeText(content || "");
+            handleCopyHeaderElement(elementType);
           }}
           className="h-6 w-6 flex items-center justify-center hover:bg-valasys-orange/10 rounded transition-colors cursor-pointer"
           title="Copy text"
         >
           <Copy className="h-3.5 w-3.5" />
+        </button>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleAddHeaderElement(elementType);
+          }}
+          className="h-6 w-6 flex items-center justify-center hover:bg-valasys-orange/10 rounded transition-colors cursor-pointer"
+          title="Add/Duplicate"
+        >
+          <Plus className="h-3.5 w-3.5" />
+        </button>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDeleteHeaderElement(elementType);
+          }}
+          className="h-6 w-6 flex items-center justify-center hover:bg-red-100 text-red-500 rounded transition-colors cursor-pointer"
+          title="Delete"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
         </button>
       </div>
     );
