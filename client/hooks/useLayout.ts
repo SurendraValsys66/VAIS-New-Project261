@@ -22,6 +22,17 @@ export const useLayout = (initialData: BuilderComponent[] = []) => {
           heroPrimaryButtonText: "Start Free Trial",
           heroSecondaryButtonText: "Watch Demo",
         }),
+        ...(type === "feature-grid" && {
+          features: [
+            { id: `f-${Date.now()}-1`, icon: "01", title: "Feature Item 1", description: "Explain how this feature solves a real problem for your users." },
+            { id: `f-${Date.now()}-2`, icon: "02", title: "Feature Item 2", description: "Explain how this feature solves a real problem for your users." },
+            { id: `f-${Date.now()}-3`, icon: "03", title: "Feature Item 3", description: "Explain how this feature solves a real problem for your users." },
+          ],
+          headerElements: [
+            { id: `h-${Date.now()}-1`, type: "heading" as const, text: "Everything you need to scale" },
+            { id: `h-${Date.now()}-2`, type: "description" as const, text: "Powerful tools designed to help you grow your business and reach your goals faster." },
+          ],
+        }),
       };
 
       // Call the onAdded callback with the new component ID

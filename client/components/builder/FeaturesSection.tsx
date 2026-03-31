@@ -46,6 +46,10 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
   const [hoveredHeaderElement, setHoveredHeaderElement] = React.useState<string | null>(null);
   const [localSelectedHeaderElement, setLocalSelectedHeaderElement] = React.useState<string | null>(selectedHeaderElement ?? null);
   const [isClickingControl, setIsClickingControl] = React.useState(false);
+  const [editingHeaderElementId, setEditingHeaderElementId] = React.useState<string | null>(null);
+  const [editingFeatureElementId, setEditingFeatureElementId] = React.useState<string | null>(null);
+  const headerElementRefsMap = React.useRef<Record<string, HTMLElement | null>>({});
+  const featureElementRefsMap = React.useRef<Record<string, HTMLElement | null>>({});
 
   const features: Feature[] = (block.properties.features || []) as Feature[];
 
@@ -465,103 +469,158 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
             >
               {/* Icon */}
               <div
+                ref={(el) => {
+                  if (el) {
+                    featureElementRefsMap.current[`${feature.id}-icon`] = el;
+                    // Only update DOM content if not currently editing this element
+                    if (editingFeatureElementId !== `${feature.id}-icon`) {
+                      if (el.textContent !== feature.icon) {
+                        el.textContent = feature.icon;
+                      }
+                    }
+                  }
+                }}
+                dir="ltr"
                 className={cn(
-                  "text-4xl mb-4 cursor-text p-2 rounded transition-all",
-                  isElementHovered(feature.id, "icon")
+                  "text-4xl mb-4 cursor-text p-2 rounded transition-all outline-none",
+                  isSelected(feature.id)
+                    ? "border-2 border-solid border-valasys-orange"
+                    : isElementHovered(feature.id, "icon")
                     ? "border-2 border-dashed border-valasys-orange bg-gray-50"
-                    : "border-2 border-transparent"
+                    : "border-2 border-transparent hover:bg-gray-50"
                 )}
+                contentEditable
+                suppressContentEditableWarning
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (isSelected(feature.id)) {
-                    setEditingFeatureId(feature.id);
-                  }
+                  const newSelectedId = selectedFeatureId === feature.id ? null : feature.id;
+                  setSelectedFeatureId(newSelectedId);
+                  setLocalSelectedHeaderElement(null);
+                  onSelect?.(newSelectedId ? { type: "feature", id: newSelectedId } : null);
+                }}
+                onInput={(e) => {
+                  const newText = e.currentTarget.textContent || "";
+                  handleUpdateFeature(feature.id, { icon: newText });
+                  setEditingFeatureElementId(`${feature.id}-icon`);
+                  onSelect?.({ type: "feature", id: feature.id });
+                }}
+                onBlur={(e) => {
+                  const newText = e.currentTarget.textContent || "";
+                  handleUpdateFeature(feature.id, { icon: newText });
+                  setEditingFeatureElementId(null);
+                }}
+                onFocus={(e) => {
+                  setEditingFeatureElementId(`${feature.id}-icon`);
+                  setSelectedFeatureId(feature.id);
+                  onSelect?.({ type: "feature", id: feature.id });
                 }}
                 onMouseEnter={() => setHoveredElement({ featureId: feature.id, element: "icon" })}
                 onMouseLeave={() => setHoveredElement(null)}
-              >
-                {isSelected(feature.id) && editingFeatureId === feature.id ? (
-                  <Input
-                    value={feature.icon}
-                    onChange={(e) => handleUpdateFeature(feature.id, { icon: e.target.value })}
-                    onFocus={() => setEditingFeatureId(feature.id)}
-                    onBlur={() => setEditingFeatureId(null)}
-                    onClick={(e) => e.stopPropagation()}
-                    className="h-auto w-12 border-0 bg-transparent p-0 text-center shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-4xl"
-                    maxLength={2}
-                    autoFocus
-                  />
-                ) : (
-                  <span className={isSelected(feature.id) ? "opacity-70" : ""}>{feature.icon}</span>
-                )}
-              </div>
+              />
 
               {/* Title */}
-              {isSelected(feature.id) && editingFeatureId === feature.id ? (
-                <Input
-                  value={feature.title}
-                  onChange={(e) => handleUpdateFeature(feature.id, { title: e.target.value })}
-                  onFocus={() => setEditingFeatureId(feature.id)}
-                  onBlur={() => setEditingFeatureId(null)}
-                  onClick={(e) => e.stopPropagation()}
-                  placeholder="Feature title"
-                  className="font-semibold text-gray-900 mb-2 border border-valasys-orange/20 bg-white px-2 py-1 rounded shadow-none focus-visible:ring-1 focus-visible:ring-valasys-orange focus-visible:ring-offset-0"
-                  autoFocus
-                />
-              ) : (
-                <h3
-                  className={cn(
-                    "text-lg font-semibold text-gray-900 mb-2 cursor-text p-2 rounded transition-all",
-                    isElementHovered(feature.id, "title")
-                      ? "border-2 border-dashed border-valasys-orange bg-gray-50"
-                      : "border-2 border-transparent"
-                  )}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (isSelected(feature.id)) {
-                      setEditingFeatureId(feature.id);
+              <h3
+                ref={(el) => {
+                  if (el) {
+                    featureElementRefsMap.current[`${feature.id}-title`] = el;
+                    // Only update DOM content if not currently editing this element
+                    if (editingFeatureElementId !== `${feature.id}-title`) {
+                      if (el.textContent !== feature.title) {
+                        el.textContent = feature.title;
+                      }
                     }
-                  }}
-                  onMouseEnter={() => setHoveredElement({ featureId: feature.id, element: "title" })}
-                  onMouseLeave={() => setHoveredElement(null)}
-                >
-                  {feature.title}
-                </h3>
-              )}
+                  }
+                }}
+                dir="ltr"
+                className={cn(
+                  "text-lg font-semibold text-gray-900 mb-2 cursor-text p-2 rounded transition-all outline-none",
+                  isSelected(feature.id)
+                    ? "border-2 border-solid border-valasys-orange"
+                    : isElementHovered(feature.id, "title")
+                    ? "border-2 border-dashed border-valasys-orange bg-gray-50"
+                    : "border-2 border-transparent hover:bg-gray-50"
+                )}
+                contentEditable
+                suppressContentEditableWarning
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (selectedFeatureId !== feature.id) {
+                    setSelectedFeatureId(feature.id);
+                    setLocalSelectedHeaderElement(null);
+                    onSelect?.({ type: "feature", id: feature.id });
+                  }
+                }}
+                onInput={(e) => {
+                  const newText = e.currentTarget.textContent || "";
+                  handleUpdateFeature(feature.id, { title: newText });
+                  setEditingFeatureElementId(`${feature.id}-title`);
+                  onSelect?.({ type: "feature", id: feature.id });
+                }}
+                onBlur={(e) => {
+                  const newText = e.currentTarget.textContent || "";
+                  handleUpdateFeature(feature.id, { title: newText });
+                  setEditingFeatureElementId(null);
+                }}
+                onFocus={(e) => {
+                  setEditingFeatureElementId(`${feature.id}-title`);
+                  setSelectedFeatureId(feature.id);
+                  onSelect?.({ type: "feature", id: feature.id });
+                }}
+                onMouseEnter={() => setHoveredElement({ featureId: feature.id, element: "title" })}
+                onMouseLeave={() => setHoveredElement(null)}
+              />
 
               {/* Description */}
-              {isSelected(feature.id) && editingFeatureId === feature.id ? (
-                <Textarea
-                  value={feature.description}
-                  onChange={(e) => handleUpdateFeature(feature.id, { description: e.target.value })}
-                  onFocus={() => setEditingFeatureId(feature.id)}
-                  onBlur={() => setEditingFeatureId(null)}
-                  onClick={(e) => e.stopPropagation()}
-                  placeholder="Feature description"
-                  className="text-sm text-gray-600 resize-none border border-valasys-orange/20 bg-white px-2 py-1 rounded shadow-none focus-visible:ring-1 focus-visible:ring-valasys-orange focus-visible:ring-offset-0"
-                  rows={3}
-                  autoFocus
-                />
-              ) : (
-                <p
-                  className={cn(
-                    "text-sm text-gray-600 cursor-text p-2 rounded transition-all",
-                    isElementHovered(feature.id, "description")
-                      ? "border-2 border-dashed border-valasys-orange bg-gray-50"
-                      : "border-2 border-transparent"
-                  )}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (isSelected(feature.id)) {
-                      setEditingFeatureId(feature.id);
+              <p
+                ref={(el) => {
+                  if (el) {
+                    featureElementRefsMap.current[`${feature.id}-description`] = el;
+                    // Only update DOM content if not currently editing this element
+                    if (editingFeatureElementId !== `${feature.id}-description`) {
+                      if (el.textContent !== feature.description) {
+                        el.textContent = feature.description;
+                      }
                     }
-                  }}
-                  onMouseEnter={() => setHoveredElement({ featureId: feature.id, element: "description" })}
-                  onMouseLeave={() => setHoveredElement(null)}
-                >
-                  {feature.description}
-                </p>
-              )}
+                  }
+                }}
+                dir="ltr"
+                className={cn(
+                  "text-sm text-gray-600 cursor-text p-2 rounded transition-all outline-none",
+                  isSelected(feature.id)
+                    ? "border-2 border-solid border-valasys-orange"
+                    : isElementHovered(feature.id, "description")
+                    ? "border-2 border-dashed border-valasys-orange bg-gray-50"
+                    : "border-2 border-transparent hover:bg-gray-50"
+                )}
+                contentEditable
+                suppressContentEditableWarning
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (selectedFeatureId !== feature.id) {
+                    setSelectedFeatureId(feature.id);
+                    setLocalSelectedHeaderElement(null);
+                    onSelect?.({ type: "feature", id: feature.id });
+                  }
+                }}
+                onInput={(e) => {
+                  const newText = e.currentTarget.textContent || "";
+                  handleUpdateFeature(feature.id, { description: newText });
+                  setEditingFeatureElementId(`${feature.id}-description`);
+                  onSelect?.({ type: "feature", id: feature.id });
+                }}
+                onBlur={(e) => {
+                  const newText = e.currentTarget.textContent || "";
+                  handleUpdateFeature(feature.id, { description: newText });
+                  setEditingFeatureElementId(null);
+                }}
+                onFocus={(e) => {
+                  setEditingFeatureElementId(`${feature.id}-description`);
+                  setSelectedFeatureId(feature.id);
+                  onSelect?.({ type: "feature", id: feature.id });
+                }}
+                onMouseEnter={() => setHoveredElement({ featureId: feature.id, element: "description" })}
+                onMouseLeave={() => setHoveredElement(null)}
+              />
 
               {renderControls(feature.id)}
             </div>
