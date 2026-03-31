@@ -480,6 +480,17 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
     onUpdate({ pricingTiers: updatedTiers });
   };
 
+  const handleDuplicateElement = (e: React.MouseEvent, elementId: string) => {
+    e.stopPropagation();
+    if (elementId === "heading") {
+      // For heading, duplicate by adding to the existing text
+      onUpdate({ heading: `${props.heading} (Copy)` });
+    } else if (elementId === "subheading") {
+      // For subheading, duplicate by adding to the existing text
+      onUpdate({ subheading: `${props.subheading} (Copy)` });
+    }
+  };
+
   return (
     <div
       onClick={onSelect}
@@ -492,7 +503,7 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
         {/* Heading */}
         <div
           className={cn(
-            "cursor-pointer transition-all rounded p-4 mb-2 relative",
+            "cursor-pointer transition-all rounded p-4 mb-2 relative group",
             selectedElement === "heading" && "bg-orange-50",
             hoveredElement === "heading" && selectedElement !== "heading" && "bg-gray-50",
           )}
@@ -510,41 +521,40 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
             handleElementClick(e, "heading");
           }}
         >
-          <h2 className="text-3xl font-bold text-center" style={{ color: props.textColor || "#1f2937" }}>
-            {props.heading}
-          </h2>
-          {selectedElement === "heading" && (
-            <div className="mt-4 flex gap-2 pt-4 border-t border-gray-300">
+          <div className="flex items-start justify-between gap-2">
+            <h2 className="text-3xl font-bold text-center flex-1" style={{ color: props.textColor || "#1f2937" }}>
+              {props.heading}
+            </h2>
+            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 onClick={(e) => handleCopyElement(e, props.heading, "heading")}
-                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-2"
-                title="Copy heading text"
+                className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors"
+                title="Copy heading"
               >
-                {copiedElement === "heading" ? (
-                  <>
-                    <Check className="w-4 h-4" /> Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" /> Copy
-                  </>
-                )}
+                {copiedElement === "heading" ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              </button>
+              <button
+                onClick={(e) => handleDuplicateElement(e, "heading")}
+                className="p-2 bg-green-500 hover:bg-green-600 text-white rounded transition-colors"
+                title="Add (duplicate) heading"
+              >
+                <Plus className="w-4 h-4" />
               </button>
               <button
                 onClick={(e) => handleDeleteElement(e, "heading")}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                className="p-2 bg-red-500 hover:bg-red-600 text-white rounded transition-colors"
                 title="Delete heading"
               >
-                <Trash2 className="w-4 h-4" /> Delete
+                <Trash2 className="w-4 h-4" />
               </button>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Subheading */}
         <div
           className={cn(
-            "cursor-pointer transition-all rounded p-4 mb-8 relative",
+            "cursor-pointer transition-all rounded p-4 mb-8 relative group",
             selectedElement === "subheading" && "bg-orange-50",
             hoveredElement === "subheading" && selectedElement !== "subheading" && "bg-gray-50",
           )}
@@ -562,35 +572,34 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
             handleElementClick(e, "subheading");
           }}
         >
-          <p className="text-center" style={{ color: props.textColor || "#4b5563" }}>
-            {props.subheading}
-          </p>
-          {selectedElement === "subheading" && (
-            <div className="mt-4 flex gap-2 pt-4 border-t border-gray-300">
+          <div className="flex items-start justify-between gap-2">
+            <p className="text-center flex-1" style={{ color: props.textColor || "#4b5563" }}>
+              {props.subheading}
+            </p>
+            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 onClick={(e) => handleCopyElement(e, props.subheading, "subheading")}
-                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-2"
-                title="Copy subheading text"
+                className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors"
+                title="Copy description"
               >
-                {copiedElement === "subheading" ? (
-                  <>
-                    <Check className="w-4 h-4" /> Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" /> Copy
-                  </>
-                )}
+                {copiedElement === "subheading" ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              </button>
+              <button
+                onClick={(e) => handleDuplicateElement(e, "subheading")}
+                className="p-2 bg-green-500 hover:bg-green-600 text-white rounded transition-colors"
+                title="Add (duplicate) description"
+              >
+                <Plus className="w-4 h-4" />
               </button>
               <button
                 onClick={(e) => handleDeleteElement(e, "subheading")}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-2"
-                title="Delete subheading"
+                className="p-2 bg-red-500 hover:bg-red-600 text-white rounded transition-colors"
+                title="Delete description"
               >
-                <Trash2 className="w-4 h-4" /> Delete
+                <Trash2 className="w-4 h-4" />
               </button>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Pricing Tiers Grid */}
