@@ -434,6 +434,17 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
     }
   };
 
+  const handleAddTier = (e: React.MouseEvent, tier: any) => {
+    e.stopPropagation();
+    const newTier = {
+      ...tier,
+      id: `tier-${Date.now()}`,
+      name: `${tier.name} Copy`,
+    };
+    const updatedTiers = [...(props.pricingTiers || []), newTier];
+    onUpdate({ pricingTiers: updatedTiers });
+  };
+
   return (
     <div
       onClick={onSelect}
@@ -587,6 +598,13 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
                     title="Copy tier details"
                   >
                     <span>📋</span> Copy
+                  </button>
+                  <button
+                    onClick={(e) => handleAddTier(e, tier)}
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-1"
+                    title="Add a duplicate tier"
+                  >
+                    <span>➕</span> Add
                   </button>
                   <button
                     onClick={(e) => handleDeleteTier(e, tier.id)}
