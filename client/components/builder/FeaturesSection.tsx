@@ -1,5 +1,6 @@
 import React from "react";
 import { LandingPageBlock } from "@/components/landing-page-builder/types";
+import { FeatureGridItemStyles } from "@/types/builder";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,6 +21,7 @@ interface Feature {
   icon: string;
   title: string;
   description: string;
+  styles?: FeatureGridItemStyles;
 }
 
 interface HeaderElement {
@@ -361,6 +363,73 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
   const isElementHovered = (featureId: string, element: "icon" | "title" | "description") =>
     hoveredElement?.featureId === featureId && hoveredElement?.element === element;
 
+  const getFeatureStyles = (feature: Feature): React.CSSProperties => {
+    const styles = feature.styles;
+
+    if (!styles) {
+      return {};
+    }
+
+    const cardStyles: React.CSSProperties = {};
+
+    if (styles.width !== undefined) {
+      cardStyles.width = `${styles.width}${styles.widthUnit || "%"}`;
+    }
+
+    if (styles.height !== undefined) {
+      cardStyles.minHeight = `${styles.height}${styles.heightUnit || "px"}`;
+    }
+
+    if (styles.padding !== undefined) {
+      cardStyles.padding = `${styles.padding}px`;
+    }
+
+    if (styles.paddingTop !== undefined) cardStyles.paddingTop = `${styles.paddingTop}px`;
+    if (styles.paddingRight !== undefined) cardStyles.paddingRight = `${styles.paddingRight}px`;
+    if (styles.paddingBottom !== undefined) cardStyles.paddingBottom = `${styles.paddingBottom}px`;
+    if (styles.paddingLeft !== undefined) cardStyles.paddingLeft = `${styles.paddingLeft}px`;
+
+    if (styles.margin !== undefined) {
+      cardStyles.margin = `${styles.margin}px`;
+    }
+
+    if (styles.marginTop !== undefined) cardStyles.marginTop = `${styles.marginTop}px`;
+    if (styles.marginRight !== undefined) cardStyles.marginRight = `${styles.marginRight}px`;
+    if (styles.marginBottom !== undefined) cardStyles.marginBottom = `${styles.marginBottom}px`;
+    if (styles.marginLeft !== undefined) cardStyles.marginLeft = `${styles.marginLeft}px`;
+
+    if (styles.borderWidth !== undefined) {
+      cardStyles.borderWidth = `${styles.borderWidth}px`;
+      cardStyles.borderStyle = "solid";
+    }
+
+    if (styles.borderColor) cardStyles.borderColor = styles.borderColor;
+    if (styles.borderRadius !== undefined) cardStyles.borderRadius = `${styles.borderRadius}px`;
+    if (styles.backgroundColor) cardStyles.backgroundColor = styles.backgroundColor;
+    if (styles.textColor) cardStyles.color = styles.textColor;
+    if (styles.fontSize !== undefined) cardStyles.fontSize = `${styles.fontSize}${styles.fontSizeUnit || "px"}`;
+    if (styles.textAlign) cardStyles.textAlign = styles.textAlign;
+    if (styles.justifyContent) cardStyles.justifyContent = styles.justifyContent;
+
+    if (styles.backgroundImageUrl) {
+      const imageUrl = styles.backgroundImageUrl.replace(/"/g, '\\"');
+      cardStyles.backgroundImage = `url("${imageUrl}")`;
+      cardStyles.backgroundSize = styles.backgroundSize || "cover";
+      cardStyles.backgroundPosition = styles.backgroundPosition || "center";
+      cardStyles.backgroundRepeat = styles.backgroundRepeat || "no-repeat";
+      cardStyles.backgroundAttachment = styles.backgroundAttachment || "scroll";
+      if (!cardStyles.minHeight) {
+        cardStyles.minHeight = "300px";
+      }
+    }
+
+    if (styles.backgroundOpacity !== undefined) {
+      cardStyles.opacity = styles.backgroundOpacity / 100;
+    }
+
+    return cardStyles;
+  };
+
   return (
     <div className="relative w-full overflow-hidden bg-white p-8 rounded-3xl border border-gray-100">
       <div className="space-y-8">
@@ -457,6 +526,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
                   ? "border-2 border-dashed border-valasys-orange bg-gray-50"
                   : "border-2 border-transparent"
               )}
+              style={getFeatureStyles(feature)}
               onMouseEnter={() => setHoveredCardId(feature.id)}
               onMouseLeave={() => setHoveredCardId(null)}
               onClick={(e) => {

@@ -21,6 +21,46 @@ export type ComponentType =
 
 export type PreviewDevice = "desktop" | "tablet" | "mobile";
 
+export interface FeatureGridItemStyles {
+  width?: number;
+  widthUnit?: "%" | "px";
+  height?: number;
+  heightUnit?: "px";
+  fontSize?: number;
+  fontSizeUnit?: "px" | "%";
+  backgroundColor?: string;
+  textColor?: string;
+  padding?: number;
+  paddingTop?: number;
+  paddingRight?: number;
+  paddingBottom?: number;
+  paddingLeft?: number;
+  margin?: number;
+  marginTop?: number;
+  marginRight?: number;
+  marginBottom?: number;
+  marginLeft?: number;
+  borderColor?: string;
+  borderWidth?: number;
+  borderRadius?: number;
+  backgroundImageUrl?: string;
+  backgroundSize?: "cover" | "contain" | "auto" | "stretch";
+  backgroundPosition?: "top" | "center" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
+  backgroundRepeat?: "repeat" | "no-repeat" | "repeat-x" | "repeat-y";
+  backgroundAttachment?: "scroll" | "fixed";
+  backgroundOpacity?: number;
+  textAlign?: "left" | "center" | "right" | "justify";
+  justifyContent?: "flex-start" | "center" | "flex-end" | "space-between";
+}
+
+export interface FeatureGridItem {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  styles?: FeatureGridItemStyles;
+}
+
 export interface BuilderComponent {
   id: string;
   type: ComponentType;
@@ -32,6 +72,10 @@ export interface BuilderComponent {
   backgroundColor?: string;
   textColor?: string;
   fontSize?: number;
+  fontWeight?: string;
+  lineHeight?: string;
+  letterSpacing?: number;
+  fontFamily?: string;
   padding?: number;
   paddingTop?: number;
   paddingRight?: number;
@@ -104,10 +148,15 @@ export interface BuilderComponent {
   headerElements?: Array<{ id: string; type: "heading" | "description"; text: string }>;
   selectedHeaderElement?: string;
   // Feature-grid specific properties
-  features?: Array<{ id: string; icon: string; title: string; description: string }>;
+  features?: FeatureGridItem[];
   selectedFeatureId?: string;
+  headerElementText?: string;
   featureGridHeading?: string;
   featureGridDescription?: string;
+  featureGridImageUrl?: string;
+  featureGridPrimaryButtonText?: string;
+  featureGridSecondaryButtonText?: string;
+  featureGridColumns?: number;
 }
 
 export const DRAG_TYPES = {

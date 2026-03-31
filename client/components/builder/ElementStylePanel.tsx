@@ -274,6 +274,7 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
       let featureDescription = "";
       let featureGridHeading = "";
       let featureGridDescription = "";
+      let selectedFeatureStyles: Record<string, any> | undefined;
 
       if (component.type === "feature-grid" && component.selectedFeatureId && Array.isArray(component.features)) {
         const selectedFeature = component.features.find((f: any) => f.id === component.selectedFeatureId);
@@ -281,8 +282,13 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
           featureIcon = selectedFeature.icon || "";
           featureTitle = selectedFeature.title || "";
           featureDescription = selectedFeature.description || "";
+          selectedFeatureStyles = selectedFeature.styles;
         }
       }
+
+      const isEditingFeatureCard = component.type === "feature-grid" && !!component.selectedFeatureId;
+      const styleSource = isEditingFeatureCard ? (selectedFeatureStyles || {}) : component;
+      const fallbackProps = isEditingFeatureCard ? {} : props;
 
       // Get selected header element data if this is a feature-grid with a selected header element
       if (component.type === "feature-grid" && component.selectedHeaderElement && Array.isArray(component.headerElements)) {
@@ -297,36 +303,36 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
       }
 
       setStyles({
-        backgroundColor: component.backgroundColor || props.backgroundColor || "#ffffff",
-        textColor: component.textColor || props.textColor || "#000000",
-        fontSize: component.fontSize ? String(component.fontSize) : (props.fontSize ? String(props.fontSize) : "16"),
-        fontWeight: component.fontWeight || props.fontWeight || "400",
-        lineHeight: component.lineHeight || props.lineHeight || "1.5",
-        letterSpacing: component.letterSpacing ? String(component.letterSpacing) : (props.letterSpacing ? String(props.letterSpacing) : "0"),
-        fontFamily: component.fontFamily || props.fontFamily || "system",
-        paddingTop: component.paddingTop ? String(component.paddingTop) : (props.paddingTop ? String(props.paddingTop) : "0"),
-        paddingRight: component.paddingRight ? String(component.paddingRight) : (props.paddingRight ? String(props.paddingRight) : "0"),
-        paddingBottom: component.paddingBottom ? String(component.paddingBottom) : (props.paddingBottom ? String(props.paddingBottom) : "0"),
-        paddingLeft: component.paddingLeft ? String(component.paddingLeft) : (props.paddingLeft ? String(props.paddingLeft) : "0"),
-        marginTop: component.marginTop ? String(component.marginTop) : (props.marginTop ? String(props.marginTop) : "0"),
-        marginRight: component.marginRight ? String(component.marginRight) : (props.marginRight ? String(props.marginRight) : "0"),
-        marginBottom: component.marginBottom ? String(component.marginBottom) : (props.marginBottom ? String(props.marginBottom) : "0"),
-        marginLeft: component.marginLeft ? String(component.marginLeft) : (props.marginLeft ? String(props.marginLeft) : "0"),
-        width: component.width ? String(component.width) : (props.width ? String(props.width) : "100"),
-        height: component.height ? String(component.height) : (props.height ? String(props.height) : ""),
-        borderRadius: component.borderRadius ? String(component.borderRadius) : (props.borderRadius ? String(props.borderRadius) : "0"),
-        borderColor: component.borderColor || props.borderColor || "#000000",
-        borderWidth: component.borderWidth ? String(component.borderWidth) : (props.borderWidth ? String(props.borderWidth) : "0"),
-        textAlign: component.textAlign || props.textAlign || "left",
-        justifyContent: component.justifyContent || props.justifyContent || "flex-start",
-        backgroundImageUrl: component.backgroundImageUrl || props.backgroundImageUrl || "",
-        backgroundSize: component.backgroundSize || props.backgroundSize || "cover",
-        backgroundPosition: component.backgroundPosition || props.backgroundPosition || "center",
-        backgroundRepeat: component.backgroundRepeat || props.backgroundRepeat || "no-repeat",
-        backgroundAttachment: component.backgroundAttachment || props.backgroundAttachment || "scroll",
-        backgroundOpacity: component.backgroundOpacity ? String(component.backgroundOpacity) : (props.backgroundOpacity ? String(props.backgroundOpacity) : "100"),
-        contentVisibility: (component.contentVisibility || props.contentVisibility || "all") as "all" | "desktop" | "tablet" | "mobile",
-        displayConditions: component.displayConditions || props.displayConditions || [],
+        backgroundColor: styleSource.backgroundColor || fallbackProps.backgroundColor || "#ffffff",
+        textColor: styleSource.textColor || fallbackProps.textColor || "#000000",
+        fontSize: styleSource.fontSize ? String(styleSource.fontSize) : (fallbackProps.fontSize ? String(fallbackProps.fontSize) : "16"),
+        fontWeight: styleSource.fontWeight || fallbackProps.fontWeight || "400",
+        lineHeight: styleSource.lineHeight || fallbackProps.lineHeight || "1.5",
+        letterSpacing: styleSource.letterSpacing ? String(styleSource.letterSpacing) : (fallbackProps.letterSpacing ? String(fallbackProps.letterSpacing) : "0"),
+        fontFamily: styleSource.fontFamily || fallbackProps.fontFamily || "system",
+        paddingTop: styleSource.paddingTop ? String(styleSource.paddingTop) : (fallbackProps.paddingTop ? String(fallbackProps.paddingTop) : "0"),
+        paddingRight: styleSource.paddingRight ? String(styleSource.paddingRight) : (fallbackProps.paddingRight ? String(fallbackProps.paddingRight) : "0"),
+        paddingBottom: styleSource.paddingBottom ? String(styleSource.paddingBottom) : (fallbackProps.paddingBottom ? String(fallbackProps.paddingBottom) : "0"),
+        paddingLeft: styleSource.paddingLeft ? String(styleSource.paddingLeft) : (fallbackProps.paddingLeft ? String(fallbackProps.paddingLeft) : "0"),
+        marginTop: styleSource.marginTop ? String(styleSource.marginTop) : (fallbackProps.marginTop ? String(fallbackProps.marginTop) : "0"),
+        marginRight: styleSource.marginRight ? String(styleSource.marginRight) : (fallbackProps.marginRight ? String(fallbackProps.marginRight) : "0"),
+        marginBottom: styleSource.marginBottom ? String(styleSource.marginBottom) : (fallbackProps.marginBottom ? String(fallbackProps.marginBottom) : "0"),
+        marginLeft: styleSource.marginLeft ? String(styleSource.marginLeft) : (fallbackProps.marginLeft ? String(fallbackProps.marginLeft) : "0"),
+        width: styleSource.width ? String(styleSource.width) : (fallbackProps.width ? String(fallbackProps.width) : "100"),
+        height: styleSource.height ? String(styleSource.height) : (fallbackProps.height ? String(fallbackProps.height) : ""),
+        borderRadius: styleSource.borderRadius ? String(styleSource.borderRadius) : (fallbackProps.borderRadius ? String(fallbackProps.borderRadius) : "0"),
+        borderColor: styleSource.borderColor || fallbackProps.borderColor || "#000000",
+        borderWidth: styleSource.borderWidth ? String(styleSource.borderWidth) : (fallbackProps.borderWidth ? String(fallbackProps.borderWidth) : "0"),
+        textAlign: styleSource.textAlign || fallbackProps.textAlign || "left",
+        justifyContent: styleSource.justifyContent || fallbackProps.justifyContent || "flex-start",
+        backgroundImageUrl: styleSource.backgroundImageUrl || fallbackProps.backgroundImageUrl || "",
+        backgroundSize: styleSource.backgroundSize || fallbackProps.backgroundSize || "cover",
+        backgroundPosition: styleSource.backgroundPosition || fallbackProps.backgroundPosition || "center",
+        backgroundRepeat: styleSource.backgroundRepeat || fallbackProps.backgroundRepeat || "no-repeat",
+        backgroundAttachment: styleSource.backgroundAttachment || fallbackProps.backgroundAttachment || "scroll",
+        backgroundOpacity: styleSource.backgroundOpacity ? String(styleSource.backgroundOpacity) : (fallbackProps.backgroundOpacity ? String(fallbackProps.backgroundOpacity) : "100"),
+        contentVisibility: (styleSource.contentVisibility || fallbackProps.contentVisibility || "all") as "all" | "desktop" | "tablet" | "mobile",
+        displayConditions: styleSource.displayConditions || fallbackProps.displayConditions || [],
         imageUrl: component.imageUrl || props.imageUrl || "",
         altText: component.altText || props.altText || "",
         videoUrl: component.videoUrl || props.videoUrl || "",
@@ -370,9 +376,9 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
 
       // Initialize units from component
       setSizingUnits({
-        width: component.widthUnit || "%",
-        height: component.heightUnit || "px",
-        fontSize: component.fontSizeUnit || "px",
+        width: styleSource.widthUnit || "%",
+        height: styleSource.heightUnit || "px",
+        fontSize: styleSource.fontSizeUnit || "px",
       });
     }
   }, [
