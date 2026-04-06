@@ -15,14 +15,37 @@ interface PageData {
   name: string;
   updatedAt: string;
   thumbnail?: string;
+  templateImage?: string;
 }
 
 export default function LandingPages() {
   const [view, setView] = useState<View>("list");
   const [searchQuery, setSearchQuery] = useState("");
   const [pages, setPages] = useState<PageData[]>([
-    { id: "1", name: "Modern Hero Page", updatedAt: "2024-03-20T10:00:00Z" },
-    { id: "2", name: "SaaS Product Landing", updatedAt: "2024-03-19T15:30:00Z" },
+    {
+      id: "1",
+      name: "Modern Hero Page",
+      updatedAt: "2024-03-20T10:00:00Z",
+      templateImage: "https://cdn.builder.io/api/v1/image/assets%2Fddd1f2eefed243f880ce4c077bf467dd%2Fc791842089ab4e8a8223fa1c37011b01?format=webp&width=800&height=1200"
+    },
+    {
+      id: "2",
+      name: "SaaS Product Landing",
+      updatedAt: "2024-03-19T15:30:00Z",
+      templateImage: "https://cdn.builder.io/api/v1/image/assets%2Fddd1f2eefed243f880ce4c077bf467dd%2Fce37966ddf2b45dca81b913547a9f779?format=webp&width=800&height=1200"
+    },
+    {
+      id: "3",
+      name: "Black Friday Sale",
+      updatedAt: "2024-03-18T12:00:00Z",
+      templateImage: "https://cdn.builder.io/api/v1/image/assets%2Fddd1f2eefed243f880ce4c077bf467dd%2F122aa3a978f347f6ae8013a8201b7046?format=webp&width=800&height=1200"
+    },
+    {
+      id: "4",
+      name: "Sports Club",
+      updatedAt: "2024-03-17T09:15:00Z",
+      templateImage: "https://cdn.builder.io/api/v1/image/assets%2Fddd1f2eefed243f880ce4c077bf467dd%2Fa8f973a0ccc04d81a3e1de84669932c9?format=webp&width=800&height=1200"
+    },
   ]);
 
   const handleCreateNew = () => {
@@ -66,7 +89,7 @@ export default function LandingPages() {
                 </h1>
                 <p className="text-gray-500 mt-1">Design, build and publish high-converting pages in minutes.</p>
               </div>
-              <div className="flex gap-3 flex-wrap justify-end">
+              <div className="flex gap-3 justify-end">
                 <Button onClick={handleAIBuilder} className="px-6 py-6 rounded-2xl shadow-md hover:shadow-lg transition-all font-bold text-base group bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
                   <Sparkles className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
                   AI Builder
@@ -107,47 +130,9 @@ export default function LandingPages() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-              {pages.map((page) => (
-                <div
-                  key={page.id}
-                  className="group bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col border-b-4 border-b-transparent hover:border-b-valasys-orange"
-                >
-                  <div className="h-48 bg-gray-50 relative overflow-hidden flex items-center justify-center p-8">
-                    <div className="w-full h-full bg-white rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-3 text-gray-300 group-hover:scale-105 group-hover:border-valasys-orange/30 group-hover:text-valasys-orange/30 transition-all">
-                      <Layout className="w-10 h-10" />
-                      <span className="text-xs font-bold uppercase tracking-widest">No Preview Available</span>
-                    </div>
-                    <div className="absolute inset-0 bg-valasys-orange/0 group-hover:bg-valasys-orange/5 transition-colors pointer-events-none" />
-                  </div>
-
-                  <div className="p-6 flex-1 flex flex-col">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-1 group-hover:text-valasys-orange transition-colors">{page.name}</h3>
-                        <div className="flex items-center gap-3 text-xs text-gray-400">
-                          <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Updated {new Date(page.updatedAt).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                      <Badge variant="secondary" className="bg-valasys-orange/10 text-valasys-orange border-none font-bold px-3">Live</Badge>
-                    </div>
-
-                    <div className="flex items-center gap-2 mt-auto">
-                      <Button onClick={handleCreateNew} className="flex-1 bg-valasys-orange hover:bg-valasys-orange/90 text-white rounded-xl py-5 font-bold shadow-lg shadow-valasys-orange/10">
-                        Edit Page
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="w-12 h-12 rounded-xl border border-gray-100 text-gray-400 hover:text-red-500 hover:bg-red-50 hover:border-red-100 transition-all p-0 flex items-center justify-center"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              <button onClick={handleCreateNew} className="group rounded-3xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center p-12 hover:border-valasys-orange hover:bg-valasys-orange/5 transition-all gap-4 text-gray-400 hover:text-valasys-orange">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {/* Create new page button - first position */}
+              <button onClick={handleCreateNew} className="group rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center p-12 hover:border-valasys-orange hover:bg-valasys-orange/5 transition-all gap-4 text-gray-400 hover:text-valasys-orange h-64">
                 <div className="w-16 h-16 rounded-full bg-gray-50 group-hover:bg-valasys-orange/10 flex items-center justify-center transition-colors shadow-inner">
                   <Plus className="w-8 h-8" />
                 </div>
@@ -156,6 +141,32 @@ export default function LandingPages() {
                   <div className="text-xs font-medium opacity-60">Start with a blank canvas</div>
                 </div>
               </button>
+
+              {/* Template cards */}
+              {pages.map((page) => (
+                <div
+                  key={page.id}
+                  className="group rounded-2xl border-2 border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border-b-4 border-b-transparent hover:border-b-valasys-orange"
+                >
+                  <div className="relative h-64 overflow-hidden flex items-center justify-center bg-gray-50">
+                    {/* Auto-scrolling template image */}
+                    <div className="relative w-full h-full overflow-hidden">
+                      <img
+                        src={page.templateImage || "https://cdn.builder.io/api/v1/image/assets%2Fddd1f2eefed243f880ce4c077bf467dd%2Fc791842089ab4e8a8223fa1c37011b01?format=webp&width=800&height=1200"}
+                        alt="Template preview"
+                        className="w-full h-auto object-cover transition-transform duration-[60s] ease-linear group-hover:translate-y-[-600px]"
+                      />
+                    </div>
+
+                    {/* Use this template button - appears on hover */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <Button onClick={handleViewTemplates} className="bg-white text-valasys-orange hover:bg-gray-100 px-8 py-3 rounded-xl font-bold shadow-lg transition-all">
+                        Use this template
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
