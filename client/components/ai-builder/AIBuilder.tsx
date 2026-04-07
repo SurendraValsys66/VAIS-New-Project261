@@ -605,12 +605,12 @@ export const AIBuilder: React.FC<AIBuilderProps> = ({ onBack, onGenerateComplete
   // Initial View
   return (
     <DashboardLayout>
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-full overflow-hidden">
         {/* Left Sidebar */}
         <AIBuilderSidebar />
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center py-12 px-4 overflow-hidden">
+        <div className="flex-1 flex flex-col items-center justify-center py-12 px-4">
           {/* Greeting Section */}
           <div className="text-center mb-12 mt-8">
             {/* Logo/Icon */}
